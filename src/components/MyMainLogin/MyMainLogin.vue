@@ -53,7 +53,7 @@
 </template>
 
 <script>
-    import { studentLogin } from "../../api/api";
+    import { studentLogin, tutorLogin, adminLogin } from "../../api/api";
     export default {
         name: "MyMain",
         data() {
@@ -92,68 +92,73 @@
                     if (valid) {
                         // 校验成功
                         // 则判断登录的身份
+
                         if (identity === "1") {
                             //学生登录
-                            studentLogin(this.form)
-                                .then((res) => {
-                                    // 如果返回空数据,则登录失败
-                                    if (res === "") {
-                                        this.$message({
-                                            message: "登录失败，账号或密码错误",
-                                            type: "error",
-                                            center: true,
-                                        });
-                                        this.form.password = "";
-                                        return;
-                                    }
-                                    // 如果登录成功
-                                    // 将登录的标志和查询到的学生对象发送给父组件 App
-                                    this.$emit("login", {
-                                        ...res,
-                                        isLogin: true,
-                                        identity: "student",
-                                        password: "",
+                            studentLogin(this.form).then((data) => {
+                                // 如果返回空数据,则登录失败
+                                if (data === "") {
+                                    this.$message({
+                                        message: "登录失败，账号或密码错误",
+                                        type: "error",
+                                        center: true,
                                     });
-                                })
-                                .catch((err) => {
-                                    console.log(err);
+                                    this.form.password = "";
+                                    return;
+                                }
+                                // 如果登录成功
+                                // 将登录的标志和查询到的学生对象发送给父组件 App
+                                this.$emit("login", {
+                                    ...data,
+                                    isLogin: true,
+                                    identity: "student",
+                                    password: "",
                                 });
+                            });
                         } else if (identity === "2") {
                             // 导师登录
-                            axios
-                                .post("/api/gp/tutor/login", this.form)
-                                .then((res) => {
-                                    // 如果返回空数据,则登录失败
-                                    if (res.data === "") {
-                                        this.$message({
-                                            message: "登录失败，账号或密码错误",
-                                            type: "error",
-                                            center: true,
-                                        });
-                                        this.form.password = "";
-                                        return;
-                                    }
-                                    // 如果登录成功
-                                    // 将登录的标志和查询到的导师对象发送给父组件 App
-                                    this.$emit("login", {
-                                        ...res.data,
-                                        isLogin: true,
-                                        identity: "tutor",
-                                        password: "",
+                            tutorLogin(this.form).then((data) => {
+                                // 如果返回空数据,则登录失败
+                                if (data === "") {
+                                    this.$message({
+                                        message: "登录失败，账号或密码错误",
+                                        type: "error",
+                                        center: true,
                                     });
+                                    this.form.password = "";
+                                    return;
+                                }
+                                // 如果登录成功
+                                // 将登录的标志和查询到的导师对象发送给父组件 App
+                                this.$emit("login", {
+                                    ...data,
+                                    isLogin: true,
+                                    identity: "tutor",
+                                    password: "",
                                 });
+                            });
                         } else if (identity === "3") {
                             // 管理员登录
-                            axios
-                                .post(
-                                    "/api/gp/admin/login",
-                                    {},
-                                    { params: this.form }
-                                )
-                                .then((res) => {
-                                    // 将登录的标志发送给父组件 MyMain
-                                    this.$emit("login", res.data);
+                            adminLogin(this.form).then((data) => {
+                                // 如果返回空数据,则登录失败
+                                if (data === "") {
+                                    this.$message({
+                                        message: "登录失败，账号或密码错误",
+                                        type: "error",
+                                        center: true,
+                                    });
+                                    this.form.password = "";
+                                    return;
+                                }
+                                // 如果登录成功
+                                // 将登录的标志和查询到的管理员对象发送给父组件 App
+                                this.$emit("login", {
+                                    ...data,
+                                    isLogin: true,
+                                    identity: "admin",
+                                    password: "",
                                 });
+                            });
                         }
                     } else {
                         // 校验失败
