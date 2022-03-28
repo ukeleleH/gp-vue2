@@ -86,7 +86,6 @@
         methods: {
             login(formName) {
                 const identity = this.identity;
-
                 // 表单校验
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
