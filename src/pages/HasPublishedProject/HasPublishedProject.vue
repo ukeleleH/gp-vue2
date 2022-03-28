@@ -290,7 +290,13 @@
 </template>
 
 <script>
-    import axios from "axios";
+    import {
+        tutorDeleteProject,
+        tutorIsUniqueProjectName,
+        tutorChangeProjectInfo,
+        tutorPublishNewProject,
+        tutorGetMyPublishProject,
+    } from "../../api/api";
     export default {
         name: "HasPublishedProject",
         data() {
@@ -300,17 +306,13 @@
                     callback(new Error("名称不能为空"));
                 } else {
                     // 查询是否存在
-                    axios
-                        .get(
-                            `/api/gp/tutor/isUniqueProjectName?name=${value.trim()}`
-                        )
-                        .then((res) => {
-                            if (res.data) {
-                                callback(new Error("课题名称已存在"));
-                            } else {
-                                callback();
-                            }
-                        });
+                    tutorIsUniqueProjectName(value.trim()).then((data) => {
+                        if (data) {
+                            callback(new Error("课题名称已存在"));
+                        } else {
+                            callback();
+                        }
+                    });
                 }
             };
             return {
@@ -389,19 +391,17 @@
                     type: "warning",
                 })
                     .then(() => {
-                        axios
-                            .get(`/api/gp/tutor/deleteProject?id=${row.id}`)
-                            .then((res) => {
-                                if (res.data) {
-                                    this.$notify({
-                                        type: "success",
-                                        message: "课题删除成功",
-                                        title: "成功",
-                                    });
-                                    this.getMyHasPublished();
-                                    this.$bus.$emit("projectHasChanged");
-                                }
-                            });
+                        tutorDeleteProject(row.id).then((data) => {
+                            if (data) {
+                                this.$notify({
+                                    type: "success",
+                                    message: "课题删除成功",
+                                    title: "成功",
+                                });
+                                this.getMyHasPublished();
+                                this.$bus.$emit("projectHasChanged");
+                            }
+                        });
                     })
                     .catch(() => {
                         this.$notify({
@@ -423,8 +423,8 @@
                     content === this.rawRowData.content
                 ) {
                     this.$message({
-                        message: "课题信息修改成功",
-                        type: "success",
+                        message: "课题信息未作修改",
+                        type: "info",
                         center: true,
                     });
                     return;
@@ -432,45 +432,40 @@
                 // 查询该选题题目是否是我唯一拥有
                 const loginInformation = localStorage.getItem("loginInformation");
                 const { id } = JSON.parse(loginInformation);
-                axios
-                    .get(`/api/gp/tutor/isUniqueProjectName?name=${name.trim()}`)
-                    .then((res) => {
-                        if (res.data.tutorId && res.data.tutorId != id) {
-                            // 表示该课题题目别的导师已发布
-                            this.$message({
-                                message: "课题信息修改失败，该课题已存在",
-                                type: "error",
-                                center: true,
-                            });
-                        } else {
-                            // 否则修改成功
-                            axios
-                                .post(
-                                    "/api/gp/tutor/changeProjectInfo",
-                                    this.description
-                                )
-                                .then((res) => {
-                                    // 如果返回数字1 ,修改成功
-                                    if (res.data) {
-                                        this.$message({
-                                            message: "课题信息修改成功",
-                                            type: "success",
-                                            center: true,
-                                        });
-                                        // 调用方法, 更新我发布的课题的表格数据
-                                        this.getMyHasPublished();
-                                        // 触发全局事件总线中的自定义事件, 更新全系的课题表格数据
-                                        this.$bus.$emit("projectHasChanged");
-                                    } else {
-                                        this.$message({
-                                            message: "课题信息修改失败",
-                                            type: "error",
-                                            center: true,
-                                        });
-                                    }
+                tutorIsUniqueProjectName(name.trim()).then((data) => {
+                    if (data && data.tutorId !== id) {
+                        // 表示该课题题目别的导师已发布
+                        this.$message({
+                            message: "课题信息修改失败，题目已存在",
+                            type: "error",
+                            center: true,
+                        });
+                    } else if (data && data.id !== this.rawRowData.id) {
+                        // 表示该课题题目自己已发布
+                        this.$message({
+                            message: "课题信息修改失败，题目已存在",
+                            type: "error",
+                            center: true,
+                        });
+                    } else {
+                        // 否则发送请求去修改课题信息
+                        tutorChangeProjectInfo(this.description).then((data) => {
+                            if (data) {
+                                this.$message({
+                                    message: "课题信息修改成功",
+                                    type: "success",
+                                    center: true,
                                 });
-                        }
-                    });
+                                // 原始行数据也要更新
+                                this.rawRowData = { ...this.description };
+                                // 调用方法, 更新我发布的课题的表格数据
+                                this.getMyHasPublished();
+                                // 触发全局事件总线中的自定义事件, 更新全系的课题表格数据
+                                this.$bus.$emit("projectHasChanged");
+                            }
+                        });
+                    }
+                });
             },
 
             // 点击取消修改按钮
@@ -490,25 +485,23 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         // 如果校验通过，则发送请求
-                        const loginInformation =
-                            localStorage.getItem("loginInformation");
-                        const { id: tutorId } = JSON.parse(loginInformation);
-                        axios
-                            .post(`/api/gp/tutor/publishNewProject`, {
-                                ...this.newProject,
-                                tutorId,
-                            })
-                            .then((res) => {
-                                if (res.data) {
-                                    this.$message({
-                                        type: "success",
-                                        message: "新课题发布成功",
-                                        center: true,
-                                    });
-                                    this.getMyHasPublished();
-                                    this.$bus.$emit("projectHasChanged");
-                                }
-                            });
+                        const { id: tutorId } = JSON.parse(
+                            localStorage.getItem("loginInformation")
+                        );
+                        tutorPublishNewProject({
+                            ...this.newProject,
+                            tutorId,
+                        }).then((data) => {
+                            if (data) {
+                                this.$message({
+                                    type: "success",
+                                    message: "新课题发布成功",
+                                    center: true,
+                                });
+                                this.getMyHasPublished();
+                                this.$bus.$emit("projectHasChanged");
+                            }
+                        });
                     }
                 });
             },
@@ -531,8 +524,8 @@
                 const loginInformation = localStorage.getItem("loginInformation");
                 const { id } = JSON.parse(loginInformation);
                 // 发送请求
-                axios.get(`/api/gp/tutor/myPublishProject?id=${id}`).then((res) => {
-                    this.publishProjectList = [...res.data];
+                tutorGetMyPublishProject(id).then((data) => {
+                    this.publishProjectList = [...data];
                 });
             },
         },
