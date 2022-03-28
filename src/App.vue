@@ -57,7 +57,8 @@
                 // data里的数据置空
                 this.isLogin = "";
                 this.loginInformation = {};
-                location.href = "http://localhost:3000";
+                // 路由地址切换
+                this.$router.replace("/");
             },
         },
         components: {
@@ -67,6 +68,10 @@
             LeftNavigation,
         },
         mounted() {
+            // 在全局事件总线上绑定事件
+            this.$bus.$on("passwordHasChanged", () => {
+                this.logout();
+            });
             // 查询 localStorage 中是否存储了登录信息
             const isLogin = localStorage.getItem("isLogin");
             const loginInformation = localStorage.getItem("loginInformation");
