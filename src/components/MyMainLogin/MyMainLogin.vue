@@ -92,78 +92,53 @@
                     if (valid) {
                         // 校验成功
                         // 则判断登录的身份
-
                         if (identity === "1") {
                             //学生登录
                             studentLogin(this.form).then((data) => {
-                                // 如果返回空数据,则登录失败
-                                if (data === "") {
-                                    this.$message({
-                                        message: "登录失败，账号或密码错误",
-                                        type: "error",
-                                        center: true,
-                                    });
-                                    this.form.password = "";
-                                    return;
-                                }
-                                // 如果登录成功
-                                // 将登录的标志和查询到的学生对象发送给父组件 App
-                                this.$emit("login", {
-                                    ...data,
-                                    isLogin: true,
-                                    identity: "student",
-                                    password: "",
-                                });
+                                this.judgeLogin(data);
                             });
                         } else if (identity === "2") {
                             // 导师登录
                             tutorLogin(this.form).then((data) => {
-                                // 如果返回空数据,则登录失败
-                                if (data === "") {
-                                    this.$message({
-                                        message: "登录失败，账号或密码错误",
-                                        type: "error",
-                                        center: true,
-                                    });
-                                    this.form.password = "";
-                                    return;
-                                }
-                                // 如果登录成功
-                                // 将登录的标志和查询到的导师对象发送给父组件 App
-                                this.$emit("login", {
-                                    ...data,
-                                    isLogin: true,
-                                    identity: "tutor",
-                                    password: "",
-                                });
+                                this.judgeLogin(data);
                             });
                         } else if (identity === "3") {
                             // 管理员登录
                             adminLogin(this.form).then((data) => {
-                                // 如果返回空数据,则登录失败
-                                if (data === "") {
-                                    this.$message({
-                                        message: "登录失败，账号或密码错误",
-                                        type: "error",
-                                        center: true,
-                                    });
-                                    this.form.password = "";
-                                    return;
-                                }
-                                // 如果登录成功
-                                // 将登录的标志和查询到的管理员对象发送给父组件 App
-                                this.$emit("login", {
-                                    ...data,
-                                    isLogin: true,
-                                    identity: "admin",
-                                    password: "",
-                                });
+                                this.judgeLogin(data);
                             });
                         }
                     } else {
                         // 校验失败
                         return false;
                     }
+                });
+            },
+
+            // 判断登录 （请求响应成功 resolved 之后执行的逻辑）
+            judgeLogin(data) {
+                // 如果返回空数据,则登录失败
+                if (data === "") {
+                    this.$message({
+                        message: "登录失败，账号或密码错误",
+                        type: "error",
+                        center: true,
+                    });
+                    this.form.password = "";
+                    return;
+                }
+                // 否则调用登录成功之后的逻辑
+                this.loginSuccess(data, this.identity);
+            },
+
+            // 登录成功之后的逻辑
+            loginSuccess(data, identity) {
+                // 将登录的标志和查询到的学生对象发送给父组件 App
+                this.$emit("login", {
+                    ...data,
+                    isLogin: true,
+                    identity,
+                    password: "",
                 });
             },
         },
