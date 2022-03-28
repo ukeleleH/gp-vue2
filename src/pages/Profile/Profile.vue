@@ -158,7 +158,11 @@
 </template>
 
 <script>
-    import axios from "axios";
+    import {
+        getStudentProject,
+        studentChangePassword,
+        tutorChangePassword,
+    } from "../../api/api";
     export default {
         name: "Profile",
         data() {
@@ -185,61 +189,53 @@
                     });
                     return;
                 }
+                const { id } = this.personInfo;
+                const password = this.password.trim();
                 // 如果有 major 信息, 就是学生身份
                 if (this.personInfo.major) {
-                    axios
-                        .get(
-                            `/api/gp/student/changePassword?id=${
-                                this.personInfo.id
-                            }&password=${this.password.trim()}`
-                        )
-                        .then((res) => {
-                            if (res.data) {
-                                this.$message({
-                                    message: "密码修改成功",
-                                    type: "success",
-                                    center: true,
-                                });
-                            } else {
-                                this.$message({
-                                    message: "密码修改失败",
-                                    type: "error",
-                                    center: true,
-                                });
-                            }
-                            // 重新只读
-                            this.isReadOnly = true;
-                        });
+                    studentChangePassword(id, password).then((data) => {
+                        this.changePassword(data);
+                    });
                 } else if (this.personInfo.title) {
                     // 如果有 title 信息就是导师身份
-                    axios
-                        .get(
-                            `/api/gp/tutor/changePassword?id=${
-                                this.personInfo.id
-                            }&password=${this.password.trim()}`
-                        )
-                        .then((res) => {
-                            if (res.data) {
-                                this.$message({
-                                    message: "密码修改成功",
-                                    type: "success",
-                                    center: true,
-                                });
-                            } else {
-                                this.$message({
-                                    message: "密码修改失败",
-                                    type: "error",
-                                    center: true,
-                                });
-                            }
-                            // 重新只读
-                            this.isReadOnly = true;
-                        });
+                    tutorChangePassword(id, password).then((data) => {
+                        this.changePassword(data);
+                    });
                 }
             },
+
             // 双击课题名称时路由跳转
             switchToMyProject() {
                 this.$router.push("/my_project");
+            },
+
+            // 修改密码 (请求响应成功之后执行的逻辑)
+            changePassword(data) {
+                if (data) {
+                    this.$message({
+                        message: "密码修改成功",
+                        type: "success",
+                        center: true,
+                    });
+                    setTimeout(() => {
+                        this.$message({
+                            message: "系统即将退出，请重新登录",
+                            type: "info",
+                            center: true,
+                        });
+                    }, 4000);
+                    setTimeout(() => {
+                        this.$bus.$emit("passwordHasChanged");
+                    }, 8000);
+                } else {
+                    this.$message({
+                        message: "密码修改失败",
+                        type: "error",
+                        center: true,
+                    });
+                }
+                // 重新只读
+                this.isReadOnly = true;
             },
         },
         beforeMount() {
@@ -251,14 +247,12 @@
             // 如果路由传递过来的参数包含有 major , 则就是学生身份
             if (personInfo.major) {
                 // 查询学生选择的毕业设计题目
-                axios
-                    .get(`/api/gp/student/sProject?id=${personInfo.id}`)
-                    .then((res) => {
-                        this.personInfo = {
-                            ...this.personInfo,
-                            sProject: res.data,
-                        };
-                    });
+                getStudentProject(personInfo.id).then((data) => {
+                    this.personInfo = {
+                        ...this.personInfo,
+                        sProject: data,
+                    };
+                });
             }
         },
     };

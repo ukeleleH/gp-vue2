@@ -63,7 +63,7 @@
 </template>
 
 <script>
-    import axios from "axios";
+    import { getMyProject, getMyProjectTutor } from "../../api/api";
     export default {
         name: "MyProject",
         data() {
@@ -79,18 +79,14 @@
                 const loginInformation = localStorage.getItem("loginInformation");
                 const { id } = JSON.parse(loginInformation);
                 // 发送请求, 获取我的课题信息
-                axios.get(`/api/gp/student/myProject?id=${id}`).then((res) => {
-                    if (res.data) {
-                        this.myProject = res.data;
-                        const { tutorId } = res.data;
+                getMyProject(id).then((data) => {
+                    if (data) {
+                        this.myProject = data;
+                        const { tutorId } = data;
                         // 发送请求, 获取我的导师信息
-                        axios
-                            .get(
-                                `/api/gp/student/myProjectTutor?tutorId=${tutorId}`
-                            )
-                            .then((res) => {
-                                this.tutorData = { ...res.data, password: "" };
-                            });
+                        getMyProjectTutor(tutorId).then((data) => {
+                            this.tutorData = { ...data, password: "" };
+                        });
                     }
                 });
             },

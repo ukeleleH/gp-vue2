@@ -167,7 +167,11 @@
 </template>
 
 <script>
-    import axios from "axios";
+    import {
+        getAllProject,
+        getAllProjectOfTutor,
+        studentChooseProject,
+    } from "../../api/api";
     export default {
         name: "AllProject",
         data() {
@@ -209,12 +213,11 @@
         methods: {
             // 获取全部课题信息
             getAllProjectList() {
-                axios
-                    .get("/api/gp/student/allProject")
-                    .then((res) => {
-                        this.totalNum = res.data.length;
-                        this.totalPage = Math.ceil(res.data.length / 10);
-                        this.allProjectList = [...res.data];
+                getAllProject()
+                    .then((data) => {
+                        this.totalNum = data.length;
+                        this.totalPage = Math.ceil(data.length / 10);
+                        this.allProjectList = [...data];
                         // 调用方法, 默认显示第一页的数据
                         this.getCurrentPageProjectList();
 
@@ -232,14 +235,12 @@
                     })
                     .then(() => {
                         // 获取所有课题对应的导师的信息
-                        axios
-                            .get("/api/gp/student/allProjectOfTutor")
-                            .then((res) => {
-                                this.allProjectList.map((item, index) => {
-                                    // 设置响应式的数据
-                                    this.$set(item, "tutor", res.data[index]);
-                                });
+                        getAllProjectOfTutor().then((data) => {
+                            this.allProjectList.map((item, index) => {
+                                // 设置响应式的数据
+                                this.$set(item, "tutor", data[index]);
                             });
+                        });
                     });
             },
 
@@ -259,13 +260,9 @@
                     type: "success",
                 })
                     .then(() => {
-                        axios
-                            .post(`/api/gp/student/chooseProject`, {
-                                id,
-                                studentId,
-                            })
-                            .then((res) => {
-                                if (res.data) {
+                        studentChooseProject({ id, studentId })
+                            .then((data) => {
+                                if (data) {
                                     this.$notify({
                                         type: "success",
                                         message: "选题成功",
