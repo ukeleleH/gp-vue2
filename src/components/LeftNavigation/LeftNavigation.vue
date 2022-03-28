@@ -162,13 +162,12 @@
         mounted() {
             // 获取索引
             this.activeIndex = localStorage.getItem("activeIndex");
-            const { identity } = this.loginInformation;
+            const { identity, id, name } = this.loginInformation;
             const { path } = this.$route;
             // 判断身份
-            if (identity === "student" && path === "/") {
+            if (identity === "1" && path === "/") {
                 // 解构赋值
-                const { id, name, major, class_grade, gender, tel } =
-                    this.loginInformation;
+                const { major, class_grade, gender, tel } = this.loginInformation;
                 // 编程式路由导航
                 setTimeout(() => {
                     this.$router.push({
@@ -183,11 +182,9 @@
                         },
                     });
                 }, 1000);
-            } else if (identity === "tutor" && path === "/") {
+            } else if (identity === "2" && path === "/") {
                 // 解构赋值
                 const {
-                    id,
-                    name,
                     qq,
                     title,
                     gender,
