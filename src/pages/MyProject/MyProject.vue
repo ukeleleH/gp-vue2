@@ -75,20 +75,18 @@
             };
         },
         methods: {
-            getMyProject() {
+            async getMyProject() {
                 const loginInformation = localStorage.getItem("loginInformation");
                 const { id } = JSON.parse(loginInformation);
                 // 发送请求, 获取我的课题信息
-                getMyProject(id).then((data) => {
-                    if (data) {
-                        this.myProject = data;
-                        const { tutorId } = data;
-                        // 发送请求, 获取我的导师信息
-                        getMyProjectTutor(tutorId).then((data) => {
-                            this.tutorData = { ...data, password: "" };
-                        });
-                    }
-                });
+                let myProjectData = await getMyProject(id);
+                if (myProjectData) {
+                    this.myProject = myProjectData;
+                    const { tutorId } = myProjectData;
+                    // 发送请求, 获取我的导师信息
+                    let data = await getMyProjectTutor(tutorId);
+                    this.tutorData = { ...data, password: "" };
+                }
             },
         },
         beforeMount() {

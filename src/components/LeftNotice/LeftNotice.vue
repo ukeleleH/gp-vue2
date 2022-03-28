@@ -20,15 +20,14 @@
                 leftNoticeData: [],
             };
         },
-        mounted() {
+        async mounted() {
             // 查询 localStorage 中是否存储了登录信息
             const isLogin = localStorage.getItem("isLogin");
             if (!isLogin) {
                 // 如果未登录
                 // 获取公告数据
-                requireLeftNotice().then((res) => {
-                    this.leftNoticeData = [...res, ...this.leftNoticeData];
-                });
+                let data = await requireLeftNotice();
+                this.leftNoticeData = [...data, ...this.leftNoticeData];
             }
         },
     };

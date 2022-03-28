@@ -413,7 +413,7 @@
             },
 
             // 点击确认修改按钮
-            confirmChange() {
+            async confirmChange() {
                 let { name, nature, source, demand, content } = this.description;
                 if (
                     name === this.rawRowData.name &&
@@ -429,43 +429,43 @@
                     });
                     return;
                 }
-                // 查询该选题题目是否是我唯一拥有
+                // 查询该选题题目是否是我唯一发布
+                let project = await tutorIsUniqueProjectName(name.trim());
+
                 const loginInformation = localStorage.getItem("loginInformation");
                 const { id } = JSON.parse(loginInformation);
-                tutorIsUniqueProjectName(name.trim()).then((data) => {
-                    if (data && data.tutorId !== id) {
-                        // 表示该课题题目别的导师已发布
+
+                if (project && project.tutorId !== id) {
+                    // 表示该课题题目别的导师已发布
+                    this.$message({
+                        message: "课题信息修改失败，题目已存在",
+                        type: "error",
+                        center: true,
+                    });
+                } else if (project && project.id !== this.rawRowData.id) {
+                    // 表示该课题题目自己已发布
+                    this.$message({
+                        message: "课题信息修改失败，题目已存在",
+                        type: "error",
+                        center: true,
+                    });
+                } else {
+                    // 否则发送请求去修改课题信息
+                    let data = await tutorChangeProjectInfo(this.description);
+                    if (data) {
                         this.$message({
-                            message: "课题信息修改失败，题目已存在",
-                            type: "error",
+                            message: "课题信息修改成功",
+                            type: "success",
                             center: true,
                         });
-                    } else if (data && data.id !== this.rawRowData.id) {
-                        // 表示该课题题目自己已发布
-                        this.$message({
-                            message: "课题信息修改失败，题目已存在",
-                            type: "error",
-                            center: true,
-                        });
-                    } else {
-                        // 否则发送请求去修改课题信息
-                        tutorChangeProjectInfo(this.description).then((data) => {
-                            if (data) {
-                                this.$message({
-                                    message: "课题信息修改成功",
-                                    type: "success",
-                                    center: true,
-                                });
-                                // 原始行数据也要更新
-                                this.rawRowData = { ...this.description };
-                                // 调用方法, 更新我发布的课题的表格数据
-                                this.getMyHasPublished();
-                                // 触发全局事件总线中的自定义事件, 更新全系的课题表格数据
-                                this.$bus.$emit("projectHasChanged");
-                            }
-                        });
+                        // 原始行数据也要更新
+                        this.rawRowData = { ...this.description };
+                        // 调用方法, 更新我发布的课题的表格数据
+                        this.getMyHasPublished();
+                        // 触发全局事件总线中的自定义事件, 更新全系的课题表格数据
+                        this.$bus.$emit("projectHasChanged");
                     }
-                });
+                }
             },
 
             // 点击取消修改按钮

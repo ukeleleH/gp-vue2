@@ -212,36 +212,31 @@
         },
         methods: {
             // 获取全部课题信息
-            getAllProjectList() {
-                getAllProject()
-                    .then((data) => {
-                        this.totalNum = data.length;
-                        this.totalPage = Math.ceil(data.length / 10);
-                        this.allProjectList = [...data];
-                        // 调用方法, 默认显示第一页的数据
-                        this.getCurrentPageProjectList();
+            async getAllProjectList() {
+                let data = await getAllProject();
 
-                        // 如果是学生登录
-                        if (this.loginInformation.major) {
-                            // 遍历所有的课题列表，如果有课题列表的 studentId 等于我的 id，则表示我已经选择了课题
-                            this.isMeHaveChoosen = this.allProjectList.some(
-                                (item) => {
-                                    return (
-                                        item.studentId === this.loginInformation.id
-                                    );
-                                }
-                            );
-                        }
-                    })
-                    .then(() => {
-                        // 获取所有课题对应的导师的信息
-                        getAllProjectOfTutor().then((data) => {
-                            this.allProjectList.map((item, index) => {
-                                // 设置响应式的数据
-                                this.$set(item, "tutor", data[index]);
-                            });
-                        });
+                this.totalNum = data.length;
+                this.totalPage = Math.ceil(data.length / 10);
+                this.allProjectList = [...data];
+
+                // 获取所有课题对应的导师的信息
+                getAllProjectOfTutor().then((data) => {
+                    this.allProjectList.map((item, index) => {
+                        // 设置响应式的数据
+                        this.$set(item, "tutor", data[index]);
                     });
+                });
+
+                // 调用方法, 默认显示第一页的数据
+                this.getCurrentPageProjectList();
+
+                // 如果是学生登录
+                if (this.loginInformation.major) {
+                    // 遍历所有的课题列表，如果有课题列表的 studentId 等于我的 id，则表示我已经选择了课题
+                    this.isMeHaveChoosen = this.allProjectList.some((item) => {
+                        return item.studentId === this.loginInformation.id;
+                    });
+                }
             },
 
             // 查看详情 (双击和点击查看按钮)

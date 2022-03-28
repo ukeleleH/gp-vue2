@@ -179,7 +179,7 @@
                 this.password = "";
             },
             // 点击提交按钮
-            handleSubmit() {
+            async handleSubmit() {
                 // 如果为空，直接返回
                 if (this.password.trim() === "") {
                     this.$message({
@@ -193,14 +193,12 @@
                 const password = this.password.trim();
                 // 如果有 major 信息, 就是学生身份
                 if (this.personInfo.major) {
-                    studentChangePassword(id, password).then((data) => {
-                        this.changePassword(data);
-                    });
+                    let data = await studentChangePassword(id, password);
+                    this.changePassword(data);
                 } else if (this.personInfo.title) {
                     // 如果有 title 信息就是导师身份
-                    tutorChangePassword(id, password).then((data) => {
-                        this.changePassword(data);
-                    });
+                    let data = await tutorChangePassword(id, password);
+                    this.changePassword(data);
                 }
             },
 
@@ -238,7 +236,7 @@
                 this.isReadOnly = true;
             },
         },
-        beforeMount() {
+        async beforeMount() {
             // 解构赋值然后重命名
             const { query: personInfo } = this.$route;
             this.personInfo = personInfo;
@@ -247,12 +245,8 @@
             // 如果路由传递过来的参数包含有 major , 则就是学生身份
             if (personInfo.major) {
                 // 查询学生选择的毕业设计题目
-                getStudentProject(personInfo.id).then((data) => {
-                    this.personInfo = {
-                        ...this.personInfo,
-                        sProject: data,
-                    };
-                });
+                let data = await getStudentProject(personInfo.id);
+                this.personInfo = { ...this.personInfo, sProject: data };
             }
         },
     };
