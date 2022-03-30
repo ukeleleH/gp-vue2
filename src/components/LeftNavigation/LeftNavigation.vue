@@ -75,7 +75,10 @@
                             </el-menu-item>
                         </router-link>
                     </el-submenu>
-                    <el-submenu index="3">
+                    <el-submenu
+                        index="3"
+                        v-if="loginInformation.identity !== 3"
+                    >
                         <template slot="title">
                             <i class="el-icon-date"></i>
                             <span>前期任务</span>
@@ -93,7 +96,10 @@
                             <el-menu-item index="3-2">文献翻译</el-menu-item>
                         </router-link>
                     </el-submenu>
-                    <el-submenu index="4">
+                    <el-submenu
+                        index="4"
+                        v-if="loginInformation.identity !== 3"
+                    >
                         <template slot="title">
                             <i class="el-icon-s-platform"></i>
                             <span>中期任务</span>
@@ -107,13 +113,31 @@
                         <el-menu-item index="4-2">编码</el-menu-item>
                         <el-menu-item index="4-3">测试</el-menu-item>
                     </el-submenu>
-                    <el-submenu index="5">
+                    <el-submenu
+                        index="5"
+                        v-if="loginInformation.identity !== 3"
+                    >
                         <template slot="title">
                             <i class="el-icon-edit-outline"></i>
                             <span>后期任务</span>
                         </template>
                         <el-menu-item index="5-1">毕业论文初稿</el-menu-item>
                         <el-menu-item index="5-2">毕业论文定稿</el-menu-item>
+                    </el-submenu>
+                    <el-submenu
+                        index="6"
+                        v-if="loginInformation.identity === 3"
+                    >
+                        <template slot="title">
+                            <i class="el-icon-edit-outline"></i>
+                            <span>人员信息管理</span>
+                        </template>
+                        <router-link to="/studentManage">
+                            <el-menu-item index="6-1">学生管理</el-menu-item>
+                        </router-link>
+                        <router-link to="/tutorManage">
+                            <el-menu-item index="6-2">导师管理</el-menu-item>
+                        </router-link>
                     </el-submenu>
                 </el-menu>
             </el-col>

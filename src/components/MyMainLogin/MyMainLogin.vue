@@ -29,9 +29,9 @@
                     />
                 </el-form-item>
                 <el-form-item style="font-weight: 800" prop="identity">
-                    <el-radio v-model="identity" label="1">学生</el-radio>
-                    <el-radio v-model="identity" label="2">导师</el-radio>
-                    <el-radio v-model="identity" label="3">管理员</el-radio>
+                    <el-radio v-model="identity" :label="1">学生</el-radio>
+                    <el-radio v-model="identity" :label="2">导师</el-radio>
+                    <el-radio v-model="identity" :label="3">管理员</el-radio>
                 </el-form-item>
                 <el-form-item style="display: flex; justify-content: center">
                     <el-button
@@ -91,17 +91,17 @@
                     if (valid) {
                         // 校验成功
                         // 则判断登录的身份
-                        if (identity === "1") {
+                        if (identity === 1) {
                             //学生登录
                             studentLogin(this.form).then((data) => {
                                 this.judgeLogin(data);
                             });
-                        } else if (identity === "2") {
+                        } else if (identity === 2) {
                             // 导师登录
                             tutorLogin(this.form).then((data) => {
                                 this.judgeLogin(data);
                             });
-                        } else if (identity === "3") {
+                        } else if (identity === 3) {
                             // 管理员登录
                             adminLogin(this.form).then((data) => {
                                 this.judgeLogin(data);
