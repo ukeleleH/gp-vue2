@@ -129,13 +129,13 @@
                         v-if="loginInformation.identity === 3"
                     >
                         <template slot="title">
-                            <i class="el-icon-edit-outline"></i>
+                            <i class="el-icon-files"></i>
                             <span>人员信息管理</span>
                         </template>
-                        <router-link to="/studentManage">
+                        <router-link to="/student_manage">
                             <el-menu-item index="6-1">学生管理</el-menu-item>
                         </router-link>
-                        <router-link to="/tutorManage">
+                        <router-link to="/tutor_manage">
                             <el-menu-item index="6-2">导师管理</el-menu-item>
                         </router-link>
                     </el-submenu>
@@ -189,7 +189,7 @@
             const { identity, id, name } = this.loginInformation;
             const { path } = this.$route;
             // 判断身份
-            if (identity === "1" && path === "/") {
+            if (identity === 1 && path === "/") {
                 // 解构赋值
                 const { major, class_grade, gender, tel } = this.loginInformation;
                 // 编程式路由导航
@@ -206,7 +206,7 @@
                         },
                     });
                 }, 1000);
-            } else if (identity === "2" && path === "/") {
+            } else if (identity === 2 && path === "/") {
                 // 解构赋值
                 const {
                     qq,
