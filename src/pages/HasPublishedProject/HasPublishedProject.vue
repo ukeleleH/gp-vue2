@@ -177,13 +177,13 @@
 
         <!-- 添加新课题的描述列表（表单） -->
         <template>
-            <el-form :model="newProject" :rules="rules" ref="newProject">
-                <el-descriptions
-                    :column="3"
-                    class="addDescription"
-                    v-show="isNewShow"
-                    border
-                >
+            <el-form
+                :model="newProject"
+                :rules="rules"
+                ref="newProject"
+                v-show="isNewShow"
+            >
+                <el-descriptions :column="3" class="addDescription" border>
                     <template slot="extra">
                         <el-button
                             type="primary"
@@ -387,7 +387,7 @@
 
             // 删除课题
             deleteProject(row) {
-                this.$confirm("确认删除改选题吗？", "删除课题", {
+                this.$confirm("确认删除该选题吗？", "删除课题", {
                     type: "warning",
                 })
                     .then(() => {
