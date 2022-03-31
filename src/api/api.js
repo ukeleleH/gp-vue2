@@ -54,10 +54,32 @@ export const tutorPublishNewProject = (data) => { return $axios.post(`/tutor/pub
 // 获取导师发布的所有课题信息
 export const tutorGetMyPublishProject = (id) => { return $axios.get(`/tutor/myPublishProject?id=${id}`) }
 
+// 管理员查询全部学生
+export const adminSelectAllStudent = () => { return $axios.get("/admin/selectAllStudent") }
 
+// 管理员查询全部导师
+export const adminSelectAllTutor = () => { return $axios.get("/admin/selectAllTutor") }
 
+// 管理员查询学生学号是否唯一
+export const adminIsUniqueStudentId = (id) => { return $axios.get(`/admin/isUniqueStudentId?id=${id}`) }
 
+// 管理员删除学生信息
+export const adminDeleteStudent = (id) => { return $axios.get(`/admin/deleteStudent?id=${id}`) }
 
+// 管理员新增学生信息
+export const adminAddStudent = (data) => { return $axios.post("/admin/addStudent", data) }
 
+// 管理员修改学生信息
+export const adminChangeStudent = (data) => { return $axios.post("/admin/changeStudent", data) }
 
+// 管理员查询导师学号是否唯一
+export const adminIsUniqueTutorId = (id) => { return $axios.get(`/admin/isUniqueTutorId?id=${id}`) }
 
+// 管理员删除导师信息
+export const adminDeleteTutor = (id) => { return $axios.get(`/admin/deleteTutor?id=${id}`) }
+
+// 管理员新增导师信息
+export const adminAddTutor = (data) => { return $axios.post("/admin/addTutor", data) }
+
+// 管理员修改导师信息
+export const adminChangeTutor = (data) => { return $axios.post("/admin/changeTutor", data) }
