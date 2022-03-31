@@ -1,0 +1,384 @@
+<template>
+    <div>
+        <!-- 通用表格 -->
+        <common-tabel
+            :height="studentTableHeight"
+            :headers="studentTableHeaders"
+            :dataList="allStudentList"
+            :showDetail="changeStudent"
+        >
+            <el-table-column slot="password" label="密码">
+                <template slot-scope="scope">
+                    <el-input
+                        v-model="scope.row.password"
+                        type="password"
+                        disabled
+                    ></el-input>
+                </template>
+            </el-table-column>
+            <el-table-column
+                slot="operateArea"
+                min-width="100"
+                fixed="right"
+                align="right"
+            >
+                <template slot="header">
+                    <el-button
+                        type="success"
+                        @click="addStudent"
+                        icon="el-icon-plus"
+                    >
+                        添加学生信息
+                    </el-button>
+                </template>
+                <template slot-scope="scope">
+                    <el-button
+                        type="primary"
+                        icon="el-icon-edit"
+                        size="mini"
+                        @click.native.prevent="changeStudent(scope.row)"
+                    >
+                        修改
+                    </el-button>
+                    <el-button
+                        type="danger"
+                        icon="el-icon-delete"
+                        size="mini"
+                        @click.native.prevent="deleteStudent(scope.row)"
+                    >
+                        删除
+                    </el-button>
+                </template>
+            </el-table-column>
+        </common-tabel>
+        <!-- 通用描述列表 -->
+        <common-desc
+            v-show="isDescShow"
+            :labels="studentFormLabels"
+            :descObj="currentRowObj"
+            :pullUp="pullUp"
+            :confirmChange="confirmChange"
+            :cancelChange="cancelChange"
+        >
+            <el-select
+                slot="gender"
+                slot-scope="{ descObj }"
+                v-model="descObj['gender']"
+                placeholder="请选择"
+            >
+                <el-option label="男" value="男"> </el-option>
+                <el-option label="女" value="女"> </el-option>
+            </el-select>
+            <el-select
+                slot="major"
+                slot-scope="{ descObj }"
+                v-model="descObj['major']"
+                placeholder="请选择"
+            >
+                <el-option label="软件工程" value="软件工程"> </el-option>
+                <el-option label="法学" value="法学"> </el-option>
+                <el-option label="会计学" value="会计学"> </el-option>
+                <el-option label="计算机科学与技术" value="计算机科学与技术">
+                </el-option>
+                <el-option label="英语" value="英语"> </el-option>
+            </el-select>
+            <el-select
+                slot="class_grade"
+                slot-scope="{ descObj }"
+                v-model="descObj['class_grade']"
+                placeholder="请选择"
+            >
+                <el-option label="182班" value="182班"> </el-option>
+                <el-option label="181班" value="181班"> </el-option>
+                <el-option label="183班" value="183班"> </el-option>
+                <el-option label="184班" value="184班"> </el-option>
+            </el-select>
+        </common-desc>
+        <!-- 通用表单 -->
+        <common-form
+            v-show="isFormShow"
+            :labels="studentFormLabels"
+            :addForm="studentForm"
+            :addRules="studentFormRules"
+            :refName="'newStudent'"
+            :pullUp="pullUp"
+            :confirmAdd="confirmAdd"
+            :cancelAdd="cancelAdd"
+        >
+            <el-form-item slot="gender" slot-scope="{ addForm }" prop="gender">
+                <el-select v-model="addForm['gender']" placeholder="请选择">
+                    <el-option label="男" value="男"> </el-option>
+                    <el-option label="女" value="女"> </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item slot="major" slot-scope="{ addForm }" prop="major">
+                <el-select v-model="addForm['major']" placeholder="请选择">
+                    <el-option label="软件工程" value="软件工程"> </el-option>
+                    <el-option label="法学" value="法学"> </el-option>
+                    <el-option label="会计学" value="会计学"> </el-option>
+                    <el-option
+                        label="计算机科学与技术"
+                        value="计算机科学与技术"
+                    >
+                    </el-option>
+                    <el-option label="英语" value="英语"> </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item
+                slot="class_grade"
+                slot-scope="{ addForm }"
+                prop="class_grade"
+            >
+                <el-select
+                    v-model="addForm['class_grade']"
+                    placeholder="请选择"
+                >
+                    <el-option label="182班" value="182班"> </el-option>
+                    <el-option label="181班" value="181班"> </el-option>
+                    <el-option label="183班" value="183班"> </el-option>
+                    <el-option label="184班" value="184班"> </el-option>
+                </el-select>
+            </el-form-item>
+        </common-form>
+    </div>
+</template>
+
+<script>
+    // 引入组件
+    import CommonTabel from "../../components/common/CommonTable.vue";
+    import CommonDesc from "../../components/common/CommonDesc.vue";
+    import CommonForm from "../../components/common/CommonForm.vue";
+    // 引入 api
+    import {
+        adminSelectAllStudent,
+        adminIsUniqueStudentId,
+        adminDeleteStudent,
+        adminAddStudent,
+        adminChangeStudent,
+    } from "../../api/api";
+    export default {
+        name: "StudentManage",
+        components: { CommonTabel, CommonForm, CommonDesc },
+        data() {
+            let checkStudentId = (_, value, callback) => {
+                if (!value) {
+                    callback(new Error("请输入学生学号"));
+                } else {
+                    // 查询是否存在
+                    adminIsUniqueStudentId(value.trim()).then((data) => {
+                        if (data) {
+                            callback(new Error("学号已存在"));
+                        } else {
+                            callback();
+                        }
+                    });
+                }
+            };
+            return {
+                isDescShow: false,
+                isFormShow: false,
+
+                studentTableHeight: 650,
+                studentTableHeaders: [],
+                allStudentList: [],
+
+                currentRowObj: {},
+                rowCurrentRowObj: {},
+
+                studentFormLabels: [
+                    "id",
+                    "password",
+                    "name",
+                    "tel",
+                    "gender",
+                    "major",
+                    "class_grade",
+                ],
+                studentForm: {
+                    id: "",
+                    password: "",
+                    name: "",
+                    tel: "",
+                    gender: "",
+                    major: "",
+                    class_grade: "",
+                },
+                studentFormRules: {
+                    id: [{ validator: checkStudentId, trigger: "blur" }],
+                    password: [
+                        {
+                            required: true,
+                            message: "请配置学生初始密码",
+                            trigger: "blur",
+                        },
+                    ],
+                    name: [
+                        {
+                            required: true,
+                            message: "请输入学生姓名",
+                            trigger: "blur",
+                        },
+                    ],
+                    tel: [
+                        {
+                            required: true,
+                            message: "请输入学生手机号",
+                            trigger: "blur",
+                        },
+                    ],
+                    gender: [
+                        {
+                            required: true,
+                            message: "请选择学生性别",
+                        },
+                    ],
+                    major: [
+                        {
+                            required: true,
+                            message: "请选择学生专业",
+                        },
+                    ],
+                    class_grade: [
+                        {
+                            required: true,
+                            message: "请选择学生班级",
+                        },
+                    ],
+                },
+            };
+        },
+        methods: {
+            // 查询所有学生
+            async getAllStudent() {
+                let data = await adminSelectAllStudent();
+                if (data) {
+                    let tempTableHeaders = [];
+                    for (let v in data[0]) {
+                        tempTableHeaders.push(v);
+                    }
+                    this.studentTableHeaders = tempTableHeaders;
+                }
+                this.allStudentList = data;
+            },
+            // 新增按钮
+            addStudent() {
+                this.studentTableHeight = 330;
+                this.isFormShow = true;
+                this.isDescShow = false;
+            },
+            // 修改学生信息
+            changeStudent(row) {
+                this.studentTableHeight = 330;
+                this.isFormShow = false;
+                this.isDescShow = true;
+                this.currentRowObj = { ...row };
+                this.rowCurrentRowObj = { ...row };
+            },
+            // 删除学生
+            deleteStudent(row) {
+                this.$confirm("确认删除该学生信息吗？", "删除学生", {
+                    type: "warning",
+                })
+                    .then(() => {
+                        adminDeleteStudent(row.id).then((data) => {
+                            if (data) {
+                                this.$notify({
+                                    type: "success",
+                                    message: "学生信息删除成功",
+                                    title: "成功",
+                                });
+                                // 重新查询数据
+                                this.getAllStudent();
+                            }
+                        });
+                    })
+                    .catch(() => {
+                        this.$notify({
+                            type: "info",
+                            message: "学生信息已取消删除",
+                            title: "取消",
+                        });
+                    });
+            },
+            // 确认新增学生信息
+            confirmAdd(refName, refs) {
+                refs[refName].validate(async (valid) => {
+                    if (valid) {
+                        // 如果校验通过，则发送请求
+                        let data = await adminAddStudent(this.studentForm);
+                        if (data) {
+                            this.$message({
+                                type: "success",
+                                message: "学生信息添加成功",
+                                center: true,
+                            });
+                            this.getAllStudent();
+                        }
+                    }
+                });
+            },
+            // 重置表单，取消添加
+            cancelAdd(refName, refs) {
+                refs[refName].resetFields();
+            },
+            // 确认修改学生信息
+            async confirmChange() {
+                const { id, password, name, tel, gender, major, class_grade } =
+                    this.currentRowObj;
+                if (
+                    id === this.rowCurrentRowObj.id &&
+                    password === this.rowCurrentRowObj.password &&
+                    name === this.rowCurrentRowObj.name &&
+                    tel === this.rowCurrentRowObj.tel &&
+                    gender === this.rowCurrentRowObj.gender &&
+                    major === this.rowCurrentRowObj.major &&
+                    class_grade === this.rowCurrentRowObj.class_grade
+                ) {
+                    this.$message({
+                        message: "学生信息未作修改",
+                        type: "info",
+                        center: true,
+                    });
+                    return;
+                }
+                // 发送请求，修改学生信息
+                try {
+                    let data = await adminChangeStudent(this.currentRowObj);
+                    if (data) {
+                        this.$message({
+                            type: "success",
+                            message: "学生信息修改成功",
+                            center: true,
+                        });
+                        // 更新原数据
+                        this.rowCurrentRowObj = { ...this.currentRowObj };
+                        // 更新列表
+                        this.getAllStudent();
+                    }
+                } catch {
+                    this.$message({
+                        type: "error",
+                        message: "学生信息修改失败",
+                        center: true,
+                    });
+                }
+            },
+            // 取消修改学生信息
+            cancelChange() {
+                this.currentRowObj = { ...this.rowCurrentRowObj };
+            },
+            // 收起表单或描述列表
+            pullUp() {
+                this.studentTableHeight = 650;
+                this.isFormShow = false;
+                this.isDescShow = false;
+            },
+        },
+        mounted() {
+            this.getAllStudent();
+        },
+    };
+</script>
+
+<style lang="scss" scoped>
+</style>
