@@ -19,12 +19,21 @@
     }
 
     .myFooter {
-      color: #909399;
+      width: 100%;
+      height: 930px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: -99;
+    }
+
+    .myFooter div {
+      width: 100%;
       position: absolute;
       bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      color: #909399;
       user-select: none;
+      text-align: center;
     }
   </style>
   <title>南大科院毕业设计互动平台</title>
@@ -38,7 +47,9 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
   <div class="myFooter">
-    Copyright&nbsp;&copy;&nbsp;南昌大学科学技术学院&nbsp;All Right Reserved
+    <div>
+      Copyright &nbsp;© &nbsp;南昌大学科学技术学院 &nbsp;All Right Reserved
+    </div>
   </div>
 </body>
 
