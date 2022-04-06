@@ -249,6 +249,74 @@
                 this.personInfo = { ...this.personInfo, sProject: data };
             }
         },
+
+        // 组件内前置导航守卫， 保证参数必传
+        beforeRouteEnter(to, _, next) {
+            let loginInformation = JSON.parse(
+                localStorage.getItem("loginInformation")
+            );
+            if (loginInformation) {
+                let { identity } = loginInformation;
+                if (identity === 3) {
+                    // 如果为管理员身份
+                    next(false);
+                } else if (identity === 2) {
+                    // 如果为导师身份
+                    let { id, name, qq, title, gender } = to.query;
+                    let { degree, tel, isInsideSchool, introduction } = to.query;
+                    // 如果任何一个参数为空，则不进行跳转
+                    if (
+                        !id ||
+                        !name ||
+                        !qq ||
+                        !title ||
+                        !gender ||
+                        !degree ||
+                        !tel ||
+                        !isInsideSchool ||
+                        !introduction
+                    ) {
+                        next(false);
+                    } else if (
+                        // 如果任何一个参数和登录信息里的不相等，则不进行跳转
+                        // 这里不使用全等判断类型， 因为 query 对象里的 value 都是字符串类型
+                        id != loginInformation.id ||
+                        name != loginInformation.name ||
+                        qq != loginInformation.qq ||
+                        title != loginInformation.title ||
+                        gender != loginInformation.gender ||
+                        degree != loginInformation.degree ||
+                        tel != loginInformation.tel ||
+                        isInsideSchool != loginInformation.isInsideSchool ||
+                        introduction != loginInformation.introduction
+                    ) {
+                        next(false);
+                    } else {
+                        next();
+                    }
+                } else if (identity === 1) {
+                    // 如果为学生身份
+                    let { id, name, major, class_grade, gender, tel } = to.query;
+                    // 如果任何一个参数为空，则不进行跳转
+                    if (!id || !name || !major || !class_grade || !gender || !tel) {
+                        next(false);
+                    } else if (
+                        // 如果任何一个参数和登录信息里的不相等，则不进行跳转
+                        // 这里不使用全等判断类型， 因为 query 对象里的 value 都是字符串类型
+                        id != loginInformation.id ||
+                        name != loginInformation.name ||
+                        gender != loginInformation.gender ||
+                        tel != loginInformation.tel ||
+                        major != loginInformation.major ||
+                        class_grade != loginInformation.class_grade
+                    ) {
+                        next(false);
+                    } else {
+                        next();
+                    }
+                }
+            }
+        },
     };
 </script>
 
