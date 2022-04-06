@@ -30,6 +30,7 @@
 </template>
 
 <script>
+    import { MessageBox } from "element-ui";
     export default {
         name: "DocumentTranslation",
         data() {
@@ -39,6 +40,27 @@
             };
         },
         methods: {},
+        beforeRouteEnter(to, from, next) {
+            let loginInformation = JSON.parse(
+                localStorage.getItem("loginInformation")
+            );
+            if (loginInformation) {
+                let { identity } = loginInformation;
+                if (identity !== 1) {
+                    MessageBox.alert(
+                        "对不起，您当前要访问的是学生界面，您暂无权限！",
+                        "提示",
+                        {
+                            type: "warning",
+                            confirmButtonText: "确定",
+                            center: true,
+                        }
+                    );
+                } else {
+                    next();
+                }
+            }
+        },
     };
 </script>
 
