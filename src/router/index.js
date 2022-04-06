@@ -33,7 +33,7 @@ const router = new VueRouter({
 })
 
 // 全局前置守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
     let loginInformation = JSON.parse(localStorage.getItem("loginInformation"))
     if (loginInformation) {
         let { identity } = loginInformation
@@ -48,6 +48,8 @@ router.beforeEach((to, from, next) => {
         } else {
             next()
         }
+    } else {
+        next()
     }
 })
 
