@@ -188,7 +188,6 @@
             this.activeIndex = localStorage.getItem("activeIndex");
             const { identity, id, name } = this.loginInformation;
             const { path } = this.$route;
-            console.log(this.$route.path);
             // 判断身份
             if (identity === 1 && path === "/") {
                 // 解构赋值
