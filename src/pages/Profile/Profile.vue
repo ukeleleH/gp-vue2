@@ -162,7 +162,7 @@
         getStudentProject,
         studentChangePassword,
         tutorChangePassword,
-    } from "../../api/api";
+    } from "@/api/api";
     export default {
         name: "Profile",
         data() {

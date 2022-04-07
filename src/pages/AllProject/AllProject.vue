@@ -171,7 +171,7 @@
         getAllProject,
         getAllProjectOfTutor,
         studentChooseProject,
-    } from "../../api/api";
+    } from "@/api/api";
     export default {
         name: "AllProject",
         data() {

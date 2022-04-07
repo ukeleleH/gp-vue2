@@ -12,7 +12,7 @@
 </template>
 
 <script>
-    import { requireLeftNotice } from "../../api/api";
+    import { requireLeftNotice } from "@/api/api";
     export default {
         name: "LeftNotice",
         data() {

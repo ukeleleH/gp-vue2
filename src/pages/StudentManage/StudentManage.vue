@@ -145,9 +145,9 @@
 
 <script>
     // 引入组件
-    import CommonTabel from "../../components/common/CommonTable.vue";
-    import CommonDesc from "../../components/common/CommonDesc.vue";
-    import CommonForm from "../../components/common/CommonForm.vue";
+    import CommonTabel from "@/components/common/CommonTable.vue";
+    import CommonDesc from "@/components/common/CommonDesc.vue";
+    import CommonForm from "@/components/common/CommonForm.vue";
     // 引入 api
     import {
         adminSelectAllStudent,
@@ -155,7 +155,7 @@
         adminDeleteStudent,
         adminAddStudent,
         adminChangeStudent,
-    } from "../../api/api";
+    } from "@/api/api";
     export default {
         name: "StudentManage",
         components: { CommonTabel, CommonForm, CommonDesc },

@@ -1,13 +1,13 @@
 import VueRouter from "vue-router"
-import Profile from "../pages/Profile/Profile.vue"
-import AllProject from "../pages/AllProject/AllProject.vue"
-import MyProject from "../pages/MyProject/MyProject.vue"
-import HasPublishedProject from "../pages/HasPublishedProject/HasPublishedProject.vue"
-import OpeningReport from "../pages/OpeningReport/OpeningReport.vue"
-import DocumentTranslation from "../pages/DocumentTranslation/DocumentTranslation.vue"
-import DatabaseDesign from "../pages/DatabaseDesign/DatabaseDesign.vue"
-import StudentManage from "../pages/StudentManage/StudentManage.vue"
-import TutorManage from "../pages/TutorManage/TutorManage.vue"
+import Profile from "@/pages/Profile/Profile.vue"
+import AllProject from "@/pages/AllProject/AllProject.vue"
+import MyProject from "@/pages/MyProject/MyProject.vue"
+import HasPublishedProject from "@/pages/HasPublishedProject/HasPublishedProject.vue"
+import OpeningReport from "@/pages/OpeningReport/OpeningReport.vue"
+import DocumentTranslation from "@/pages/DocumentTranslation/DocumentTranslation.vue"
+import DatabaseDesign from "@/pages/DatabaseDesign/DatabaseDesign.vue"
+import StudentManage from "@/pages/StudentManage/StudentManage.vue"
+import TutorManage from "@/pages/TutorManage/TutorManage.vue"
 
 import { MessageBox } from 'element-ui'
 

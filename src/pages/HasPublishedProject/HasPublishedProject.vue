@@ -296,7 +296,7 @@
         tutorChangeProjectInfo,
         tutorPublishNewProject,
         tutorGetMyPublishProject,
-    } from "../../api/api";
+    } from "@/api/api";
     export default {
         name: "HasPublishedProject",
         data() {

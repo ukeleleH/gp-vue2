@@ -53,7 +53,7 @@
 </template>
 
 <script>
-    import { studentLogin, tutorLogin, adminLogin } from "../../api/api";
+    import { studentLogin, tutorLogin, adminLogin } from "@/api/api";
     export default {
         name: "MyMain",
         data() {
@@ -146,7 +146,7 @@
 
 <style lang="scss">
     .main_wrap {
-        background-image: url("../../assets/背景.png");
+        background-image: url("~@/assets/背景.png");
         background-repeat: no-repeat;
         background-position: center;
         width: 1100px;

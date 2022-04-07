@@ -63,7 +63,7 @@
 </template>
 
 <script>
-    import { getMyProject, getMyProjectTutor } from "../../api/api";
+    import { getMyProject, getMyProjectTutor } from "@/api/api";
     import { MessageBox } from "element-ui";
     export default {
         name: "MyProject",

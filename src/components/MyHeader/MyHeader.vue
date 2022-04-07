@@ -2,17 +2,17 @@
     <div class="header_wrap">
         <div class="school_badge_wrap">
             <a href="http://www.ndkj.com.cn/" target="_new">
-                <img src="../../assets/校徽.png" />
+                <img src="@/assets/校徽.png" />
             </a>
         </div>
         <div class="school_name_chinese">
             <a href="http://www.ndkj.com.cn/" target="_new">
-                <img src="../../assets/南大中文.png" />
+                <img src="@/assets/南大中文.png" />
             </a>
         </div>
         <div class="school_name_english">
             <a href="http://www.ndkj.com.cn/" target="_new">
-                <img src="../../assets/南大英文.png" />
+                <img src="@/assets/南大英文.png" />
             </a>
         </div>
         <h1>毕业设计(论文)互动平台</h1>

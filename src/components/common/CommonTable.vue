@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import labelFilterMixin from "../../mixin/labelFilter.mixin";
+    import labelFilterMixin from "@/mixin/labelFilter.mixin";
     export default {
         name: "CommonTable",
         mixins: [labelFilterMixin],

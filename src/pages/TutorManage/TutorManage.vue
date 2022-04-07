@@ -163,9 +163,9 @@
 
 <script>
     // 引入组件
-    import CommonTabel from "../../components/common/CommonTable.vue";
-    import CommonForm from "../../components/common/CommonForm.vue";
-    import CommonDesc from "../../components/common/CommonDesc.vue";
+    import CommonTabel from "@/components/common/CommonTable.vue";
+    import CommonForm from "@/components/common/CommonForm.vue";
+    import CommonDesc from "@/components/common/CommonDesc.vue";
     // 引入 api 接口
     import {
         adminSelectAllTutor,
@@ -173,7 +173,7 @@
         adminDeleteTutor,
         adminAddTutor,
         adminChangeTutor,
-    } from "../../api/api";
+    } from "@/api/api";
     export default {
         name: "TutorManage",
         components: { CommonTabel, CommonForm, CommonDesc },

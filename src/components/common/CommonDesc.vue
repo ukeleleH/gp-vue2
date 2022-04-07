@@ -33,7 +33,7 @@
 </template>
 
 <script>
-    import labelFilterMixin from "../../mixin/labelFilter.mixin";
+    import labelFilterMixin from "@/mixin/labelFilter.mixin";
     export default {
         name: "CommonDesc",
         mixins: [labelFilterMixin],
