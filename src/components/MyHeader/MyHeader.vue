@@ -17,9 +17,11 @@
         </div>
         <h1>毕业设计(论文)互动平台</h1>
         <div class="login_name" v-if="isLogin">
-            欢迎你，<i>{{ loginInformation.name }}</i>
+            欢迎你,&nbsp;
+            <i @click="goProfile">{{ loginInformation.name }}</i>
+            <span>&nbsp;&nbsp;({{ identity }})</span>
         </div>
-        <el-button type="danger" @click="logout" v-if="isLogin">
+        <el-button size="mini" type="danger" @click="logout" v-if="isLogin">
             退出登录
         </el-button>
     </div>
@@ -29,7 +31,34 @@
     export default {
         name: "MyHeader",
         props: ["isLogin", "loginInformation"],
+        computed: {
+            identity() {
+                if (this.loginInformation.identity === 1) return "学生";
+                if (this.loginInformation.identity === 2) return "导师";
+                if (this.loginInformation.identity === 3) return "管理员";
+            },
+        },
         methods: {
+            goProfile() {
+                const { identity } = this.loginInformation;
+                const { id, name } = this.loginInformation;
+                if (identity === 1) {
+                    // 学生身份
+                    const { major, class_grade, gender, tel } =
+                        this.loginInformation;
+                    this.$router.push(
+                        `/profile?id=${id}&name=${name}&major=${major}&class_grade=${class_grade}&gender=${gender}&tel=${tel}`
+                    );
+                } else if (identity === 2) {
+                    // 导师身份
+                    const { title, degree, gender, tel, qq } =
+                        this.loginInformation;
+                    const { introduction, isInsideSchool } = this.loginInformation;
+                    this.$router.push(
+                        `/profile?id=${id}&name=${name}&title=${title}&degree=${degree}&gender=${gender}&tel=${tel}&qq=${qq}&introduction=${introduction}&isInsideSchool=${isInsideSchool}`
+                    );
+                }
+            },
             logout() {
                 this.$emit("logout");
             },
@@ -37,7 +66,7 @@
     };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .header_wrap {
         width: 1200px;
         height: 120px;
@@ -83,6 +112,10 @@
             i {
                 color: #409eff;
                 font-weight: bolder;
+                &:hover {
+                    text-decoration: underline solid 2px;
+                    cursor: pointer;
+                }
             }
         }
         button {
