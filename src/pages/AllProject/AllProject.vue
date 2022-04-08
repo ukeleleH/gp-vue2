@@ -93,7 +93,7 @@
         </el-table>
 
         <!-- 未过滤的分页 -->
-        <div class="pagination_wrap" v-if="keyword ? false : true">
+        <div class="pagination_wrap" v-show="keyword ? false : true">
             <el-pagination
                 layout="prev, pager, next,total"
                 :total="totalNum"
@@ -104,7 +104,7 @@
             </el-pagination>
         </div>
         <!-- 过滤后的分页 -->
-        <div class="pagination_wrap" v-if="keyword">
+        <div class="pagination_wrap" v-show="keyword">
             <el-pagination
                 layout="prev, pager, next,total"
                 :total="filtersTotalNum"
@@ -263,7 +263,7 @@
                                         message: "选题成功",
                                     });
                                     this.getAllProjectList();
-                                    this.$bus.$emit("hasChoosenProject");
+                                    this.$bus.$emit("myProjectHasChanged");
                                 }
                             })
                             .catch(() => {

@@ -81,24 +81,28 @@
                 const { id } = JSON.parse(loginInformation);
                 // 发送请求, 获取我的课题信息
                 let myProjectData = await getMyProject(id);
+                // 如果存在课题信息
                 if (myProjectData) {
                     this.myProject = myProjectData;
                     const { tutorId } = myProjectData;
                     // 发送请求, 获取我的导师信息
                     let data = await getMyProjectTutor(tutorId);
                     this.tutorData = { ...data, password: "" };
+                } else {
+                    this.myProject = {};
+                    this.tutorData = {};
                 }
             },
         },
         beforeMount() {
             this.getMyProject();
-            // 在全局事件总线上绑定自定义事件
-            this.$bus.$on("hasChoosenProject", () => {
+            // 在全局事件总线上绑定自定义事件(选择和重选课题时触发)
+            this.$bus.$on("myProjectHasChanged", () => {
                 this.getMyProject();
             });
         },
         beforeDestroy() {
-            this.$bus.$off("hasChoosenProject");
+            this.$bus.$off("myProjectHasChanged");
         },
         beforeRouteEnter(to, from, next) {
             let loginInformation = JSON.parse(

@@ -45,11 +45,25 @@
                     :labelStyle="{ background: '#E1F3D8' }"
                     :contentStyle="{ background: '#E1F3D8' }"
                 >
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.sProject"
-                        @dblclick.native="switchToMyProject"
-                    ></el-input>
+                    <el-row>
+                        <el-col :span="18">
+                            <el-input
+                                :readonly="true"
+                                v-model="personInfo.sProject"
+                                @dblclick.native="switchToMyProject"
+                            >
+                            </el-input>
+                        </el-col>
+                        <el-col :span="4" :offset="2">
+                            <el-button
+                                type="warning"
+                                v-if="personInfo.sProject"
+                                @click="HandleReselection"
+                            >
+                                重选
+                            </el-button>
+                        </el-col>
+                    </el-row>
                 </el-descriptions-item>
             </el-descriptions>
         </template>
@@ -160,6 +174,9 @@
 <script>
     import {
         getStudentProject,
+        getStudentOpportunity,
+        updateStudentOpportunity,
+        studentUpdateHasChooseProject,
         studentChangePassword,
         tutorChangePassword,
     } from "@/api/api";
@@ -205,6 +222,49 @@
             // 双击课题名称时路由跳转
             switchToMyProject() {
                 this.$router.push("/my_project");
+            },
+
+            // 重选课题
+            HandleReselection() {
+                this.$confirm(
+                    "每个人只有一次重选机会，且重选后可能不能再选择到现在的选题，确定要重选吗?",
+                    "提示",
+                    {
+                        confirmButtonText: "确定",
+                        cancelButtonText: "取消",
+                        type: "warning",
+                    }
+                )
+                    .then(async () => {
+                        const { id } = this.personInfo;
+                        // 查询可重选的次数
+                        let num = await getStudentOpportunity(id);
+                        if (num) {
+                            // 更新已选择的课题信息
+                            const data = await studentUpdateHasChooseProject(id);
+                            // 更新可重选的次数
+                            const dataTwo =
+                                data && (await updateStudentOpportunity(id));
+                            if (dataTwo) {
+                                this.personInfo.sProject = "";
+                                this.$message({
+                                    type: "success",
+                                    center: true,
+                                    message: "请重新选择毕业选题!",
+                                });
+                                // 触发全局事件总线里的自定义事件, 更新全部的课题信息，更新我的课题信息
+                                this.$bus.$emit("projectHasChanged");
+                                this.$bus.$emit("myProjectHasChanged");
+                            }
+                        } else {
+                            this.$message({
+                                type: "error",
+                                center: true,
+                                message: "重选失败，您已没有重选机会!",
+                            });
+                        }
+                    })
+                    .catch(() => {});
             },
 
             // 修改密码 (请求响应成功之后执行的逻辑)
