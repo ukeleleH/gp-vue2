@@ -674,18 +674,19 @@
             // 判断身份
             // 如果路由传递过来的参数包含有 title , 则就是导师身份
             if (query.title) {
-                this.tutorForm = { ...query };
-                this.rawFormData = { ...query };
                 this.refName = "tutorForm";
+                this.tutorForm = { ...query };
+                // 原始数据
+                this.rawFormData = { ...query };
             }
             // 如果路由传递过来的参数包含有 major , 则就是学生身份
             if (query.major) {
-                this.studentForm = { ...query };
-                this.rawFormData = { ...query };
                 this.refName = "studentForm";
                 // 查询学生选择的毕业设计题目
                 let data = await getStudentProject(query.id);
-                this.studentForm = { ...this.studentForm, sProject: data };
+                this.studentForm = { ...query, sProject: data };
+                // 原始数据
+                this.rawFormData = { ...this.studentForm };
             }
         },
 
