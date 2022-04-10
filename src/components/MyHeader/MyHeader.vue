@@ -18,7 +18,9 @@
         <h1>毕业设计(论文)互动平台</h1>
         <div class="login_name" v-if="isLogin">
             欢迎你,&nbsp;
-            <i @click="goProfile">{{ loginInformation.name }}</i>
+            <i @click="goProfile" :class="{ current: current }">
+                {{ loginInformation.name }}
+            </i>
             <span>&nbsp;&nbsp;({{ identity }})</span>
         </div>
         <el-button size="mini" type="danger" @click="logout" v-if="isLogin">
@@ -36,6 +38,12 @@
                 if (this.loginInformation.identity === 1) return "学生";
                 if (this.loginInformation.identity === 2) return "导师";
                 if (this.loginInformation.identity === 3) return "管理员";
+            },
+            // 通过计算属性，动态地给名字是否加上 :hover 的样式
+            current() {
+                if (this.loginInformation.identity === 1) return true;
+                if (this.loginInformation.identity === 2) return true;
+                if (this.loginInformation.identity === 3) return false;
             },
         },
         methods: {
@@ -74,6 +82,7 @@
         margin-bottom: 5px;
         position: relative;
         border-bottom: 3px solid #a03f4d;
+        user-select: none;
         .school_badge_wrap {
             position: absolute;
             left: 10px;
@@ -112,7 +121,7 @@
             i {
                 color: #409eff;
                 font-weight: bolder;
-                &:hover {
+                &.current:hover {
                     text-decoration: underline solid 2px;
                     cursor: pointer;
                 }

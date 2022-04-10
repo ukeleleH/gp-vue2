@@ -1,43 +1,79 @@
 <template>
-    <div style="margin-top: 20px; user-select: none">
+    <div class="description_wrap">
         <!-- 学生登录时显示的部分 -->
-        <template v-if="personInfo.major">
-            <el-descriptions direction="vertical" :column="4" border>
+        <el-form
+            v-if="studentForm.major"
+            ref="studentForm"
+            :model="studentForm"
+            :rules="studentFormRules"
+        >
+            <el-descriptions direction="vertical" :column="3" border>
                 <el-descriptions-item label="账号（学号/工号/邮箱）">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.id"
-                    ></el-input>
+                    <el-form-item>
+                        <el-input
+                            :readonly="true"
+                            v-model="studentForm.id"
+                            @dblclick.native="showMessage"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="姓名">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.name"
-                    ></el-input>
+                    <el-form-item prop="name">
+                        <el-input
+                            :readonly="isReadOnly"
+                            :maxlength="32"
+                            show-word-limit
+                            v-model="studentForm.name"
+                            ref="nameInput"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="性别">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.gender"
-                    ></el-input>
+                    <el-form-item prop="gender">
+                        <el-select
+                            style="width: 100%"
+                            v-model="studentForm.gender"
+                        >
+                            <el-option
+                                label="男"
+                                value="男"
+                                :disabled="isReadOnly"
+                            ></el-option>
+                            <el-option
+                                label="女"
+                                value="女"
+                                :disabled="isReadOnly"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="手机号">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.tel"
-                    ></el-input>
+                    <el-form-item prop="tel">
+                        <el-input
+                            :readonly="isReadOnly"
+                            :maxlength="11"
+                            show-word-limit
+                            v-model="studentForm.tel"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="专业">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.major"
-                    ></el-input>
+                    <el-form-item prop="major">
+                        <el-select
+                            style="width: 100%"
+                            v-model="studentForm.major"
+                        >
+                        </el-select>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="班级">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.class_grade"
-                    ></el-input>
+                    <el-form-item prop="class_grade">
+                        <el-select
+                            style="width: 100%"
+                            v-model="studentForm.class_grade"
+                        >
+                        </el-select>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item
                     label="所选毕业设计课题"
@@ -46,19 +82,20 @@
                     :contentStyle="{ background: '#E1F3D8' }"
                 >
                     <el-row>
-                        <el-col :span="18">
+                        <el-col :span="16">
                             <el-input
                                 :readonly="true"
-                                v-model="personInfo.sProject"
+                                v-model="studentForm.sProject"
                                 @dblclick.native="switchToMyProject"
                             >
                             </el-input>
                         </el-col>
-                        <el-col :span="4" :offset="2">
+                        <el-col :span="4">
                             <el-button
                                 type="warning"
-                                v-if="personInfo.sProject"
+                                v-if="studentForm.sProject"
                                 @click="HandleReselection"
+                                style="margin-left: 15px"
                             >
                                 重选
                             </el-button>
@@ -66,108 +103,220 @@
                     </el-row>
                 </el-descriptions-item>
             </el-descriptions>
-        </template>
+            <el-form-item class="changeBox" v-show="isReadOnly">
+                <el-button size="small" type="primary" @click="changeProfile">
+                    修改基本资料
+                </el-button>
+                <el-button size="small" type="primary" @click="changePassword">
+                    修改密码
+                </el-button>
+            </el-form-item>
+            <el-form-item class="changeBox" v-show="!isReadOnly">
+                <el-button
+                    size="small"
+                    type="success"
+                    @click="confirmChangeProfile(refName)"
+                >
+                    确定
+                </el-button>
+                <el-button
+                    size="small"
+                    type="danger"
+                    @click="cancelChangeProfile(refName)"
+                >
+                    取消
+                </el-button>
+            </el-form-item>
+        </el-form>
 
         <!-- 导师登录时显示的部分 -->
-        <template v-if="personInfo.title">
+        <el-form
+            v-if="tutorForm.title"
+            ref="tutorForm"
+            :model="tutorForm"
+            :rules="tutorFormRules"
+        >
             <el-descriptions direction="vertical" :column="4" border>
                 <el-descriptions-item label="账号（学号/工号/邮箱）">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.id"
-                    ></el-input>
+                    <el-form-item>
+                        <el-input
+                            :readonly="true"
+                            v-model="tutorForm.id"
+                            @dblclick.native="showMessage"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="姓名">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.name"
-                    ></el-input>
+                    <el-form-item prop="name">
+                        <el-input
+                            :readonly="isReadOnly"
+                            v-model="tutorForm.name"
+                            :maxlength="32"
+                            show-word-limit
+                            ref="nameInput"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="性别">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.gender"
-                    ></el-input>
+                    <el-form-item>
+                        <el-select
+                            style="width: 100%"
+                            v-model="tutorForm.gender"
+                        >
+                            <el-option
+                                label="男"
+                                value="男"
+                                :disabled="isReadOnly"
+                            ></el-option>
+                            <el-option
+                                label="女"
+                                value="女"
+                                :disabled="isReadOnly"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="手机号">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.tel"
-                    ></el-input>
+                    <el-form-item prop="tel">
+                        <el-input
+                            :readonly="isReadOnly"
+                            :maxlength="11"
+                            show-word-limit
+                            v-model="tutorForm.tel"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="QQ">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.qq"
-                    ></el-input>
+                    <el-form-item prop="qq">
+                        <el-input
+                            :readonly="isReadOnly"
+                            :maxlength="12"
+                            show-word-limit
+                            v-model="tutorForm.qq"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="职称">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.title"
-                    ></el-input>
+                    <el-form-item>
+                        <el-input
+                            :readonly="true"
+                            v-model="tutorForm.title"
+                            @dblclick.native="showMessage"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="学位">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.degree"
-                    ></el-input>
+                    <el-form-item>
+                        <el-input
+                            :readonly="true"
+                            v-model="tutorForm.degree"
+                            @dblclick.native="showMessage"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="校内/校外">
-                    <el-input
-                        :readonly="true"
-                        :value="
-                            personInfo.isInsideSchool == 1
-                                ? '校内导师'
-                                : '校外专家'
-                        "
-                    ></el-input>
+                    <el-form-item prop="introduction">
+                        <el-input
+                            :readonly="true"
+                            @dblclick.native="showMessage"
+                            :value="
+                                tutorForm.isInsideSchool == 1
+                                    ? '校内导师'
+                                    : '校外专家'
+                            "
+                        >
+                        </el-input>
+                    </el-form-item>
                 </el-descriptions-item>
-                <el-descriptions-item label="介绍" :span="4">
-                    <el-input
-                        :readonly="true"
-                        v-model="personInfo.introduction"
-                    ></el-input>
+                <el-descriptions-item
+                    label="介绍"
+                    :span="3"
+                    :contentStyle="{
+                        'border-bottom': '1px solid transparent',
+                    }"
+                >
+                    <el-form-item>
+                        <el-input
+                            :readonly="isReadOnly"
+                            type="textarea"
+                            resize="none"
+                            :rows="4"
+                            :maxlength="255"
+                            show-word-limit
+                            @dblclick.native="showMessage"
+                            v-model="tutorForm.introduction"
+                        ></el-input>
+                    </el-form-item>
                 </el-descriptions-item>
             </el-descriptions>
-        </template>
-
-        <!-- 修改密码的部分 -->
-        <el-descriptions
-            title="修改密码"
-            :column="3"
-            border
-            style="margin-top: 50px"
-        >
-            <el-descriptions-item>
-                <template slot="label">
-                    <i class="el-icon-notebook-1"></i>
-                    密码
-                </template>
-                <el-input
-                    type="password"
-                    :readonly="isReadOnly"
-                    v-model="password"
-                    show-password
-                    style="width: 300px"
-                >
-                </el-input>
+            <el-form-item class="changeBox" v-show="isReadOnly">
+                <el-button size="small" type="primary" @click="changeProfile">
+                    修改基本资料
+                </el-button>
+                <el-button size="small" type="primary" @click="changePassword">
+                    修改密码
+                </el-button>
+            </el-form-item>
+            <el-form-item class="changeBox" v-show="!isReadOnly">
                 <el-button
-                    type="primary"
-                    @click="handleChange"
-                    plain
-                    v-show="isReadOnly"
-                    >修改</el-button
+                    size="small"
+                    type="success"
+                    @click="confirmChangeProfile(refName)"
                 >
+                    确定
+                </el-button>
+                <el-button
+                    size="small"
+                    type="danger"
+                    @click="cancelChangeProfile(refName)"
+                >
+                    取消
+                </el-button>
+            </el-form-item>
+        </el-form>
+
+        <!-- 修改密码的对话框 -->
+        <el-dialog
+            class="dialogForm"
+            :visible.sync="dialogFormVisible"
+            :close-on-click-modal="false"
+            width="28%"
+            center
+        >
+            <div slot="title" class="title">密码修改</div>
+            <el-form ref="pwdForm" :model="pwdForm" :rules="pwdRules">
+                <el-form-item label="新密码" prop="password">
+                    <el-input
+                        v-model="pwdForm.password"
+                        type="password"
+                        :maxlength="20"
+                    ></el-input>
+                </el-form-item>
+                <el-form-item label="确认新密码" prop="checkPass">
+                    <el-input
+                        v-model="pwdForm.checkPass"
+                        type="password"
+                        :maxlength="20"
+                    ></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="footer">
                 <el-button
                     type="success"
-                    @click="handleSubmit"
-                    plain
-                    v-show="!isReadOnly"
-                    >提交</el-button
+                    size="small"
+                    @click="confirmChangePassword('pwdForm')"
                 >
-            </el-descriptions-item>
-        </el-descriptions>
+                    确 定
+                </el-button>
+                <el-button
+                    type="danger"
+                    size="small"
+                    @click="cancelChangePassword('pwdForm')"
+                >
+                    取 消
+                </el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -177,46 +326,298 @@
         getStudentOpportunity,
         updateStudentOpportunity,
         studentUpdateHasChooseProject,
+        studentChangeProfile,
+        tutorChangeProfile,
         studentChangePassword,
         tutorChangePassword,
     } from "@/api/api";
     export default {
         name: "Profile",
         data() {
+            // 密码校验规则
+            var validatePass = (rule, value, callback) => {
+                let reg = /^\w{8,20}$/;
+                if (value === "") {
+                    callback(new Error("请输入新密码"));
+                } else if (!reg.test(value)) {
+                    callback(
+                        new Error("密码只能包含字母、数字、下划线，且长度至少8位")
+                    );
+                } else {
+                    this.$refs.pwdForm.validateField("checkPass");
+                    callback();
+                }
+            };
+            // 确认密码校验规则
+            var validateCheckPass = (rule, value, callback) => {
+                if (value === "") {
+                    callback(new Error("请再一次输入新密码"));
+                } else if (value !== this.pwdForm.password) {
+                    callback(new Error("两次输入密码不一致!"));
+                } else {
+                    callback();
+                }
+            };
+            // 手机号校验规则
+            var checkTel = (rule, value, callback) => {
+                let reg = /^(13\d|14[579]|15[^4\D]|17[^49\D]|18\d)\d{8}$/;
+                if (value === "") {
+                    callback(new Error("手机号不能为空"));
+                } else if (value.length !== 11) {
+                    callback(new Error("格式不正确，请输入11位手机号"));
+                } else if (!reg.test(value)) {
+                    callback(new Error("格式不正确，手机号以13/4/5/7/8开头"));
+                } else {
+                    callback();
+                }
+            };
+            // QQ号的校验规则
+            var checkQQ = (rule, value, callback) => {
+                let reg = /^\d{6,12}$/;
+                if (!reg.test(value)) {
+                    callback(new Error("QQ号只能是数字,且为6-12位"));
+                } else {
+                    callback();
+                }
+            };
+            // 导师介绍的校验规则
+            var checkIntro = (rule, value, callback) => {
+                if (value === "") {
+                    callback(new Error("个人介绍不能为空"));
+                } else if (value.length < 10) {
+                    callback(new Error("请至少输入10个字"));
+                } else {
+                    callback();
+                }
+            };
             return {
                 isReadOnly: true,
-                personInfo: {},
-                password: "**********",
+                studentForm: {},
+                tutorForm: {},
+                rawFormData: {},
+                refName: "",
+
+                studentFormRules: {
+                    name: [
+                        {
+                            required: true,
+                            message: "姓名不能为空",
+                            trigger: "blur",
+                        },
+                    ],
+                    major: [{ required: true, trigger: "blur" }],
+                    class_grade: [{ required: true, trigger: "blur" }],
+                    tel: [{ validator: checkTel, trigger: "blur" }],
+                },
+
+                tutorFormRules: {
+                    name: [
+                        {
+                            required: true,
+                            message: "姓名不能为空",
+                            trigger: "blur",
+                        },
+                    ],
+                    qq: [{ validator: checkQQ, trigger: "blur" }],
+                    introduction: [{ validator: checkIntro, trigger: "blur" }],
+                    tel: [{ validator: checkTel, trigger: "blur" }],
+                },
+
+                dialogFormVisible: false,
+                pwdForm: {
+                    password: "",
+                    checkPass: "",
+                },
+                pwdRules: {
+                    password: [{ validator: validatePass, trigger: "blur" }],
+                    checkPass: [{ validator: validateCheckPass, trigger: "blur" }],
+                },
             };
         },
         methods: {
-            // 点击修改按钮
-            handleChange() {
+            // 点击修改基本资料
+            changeProfile() {
                 this.isReadOnly = false;
-                this.password = "";
+                // 获取焦点
+                this.$refs.nameInput.focus();
             },
-            // 点击提交按钮
-            async handleSubmit() {
-                // 如果为空，直接返回
-                if (this.password.trim() === "") {
+
+            // 确定修改基本资料
+            confirmChangeProfile(formRefName) {
+                // 表单校验
+                this.$refs[formRefName].validate(async (valid) => {
+                    if (valid) {
+                        // 校验通过
+                        // 如果是学生
+                        if (this.studentForm.major) {
+                            const { name, gender, tel, class_grade } =
+                                this.rawFormData;
+                            // 如果信息未做修改，直接返回，不发送请求
+                            if (
+                                name === this.studentForm.name &&
+                                gender === this.studentForm.gender &&
+                                tel === this.studentForm.tel &&
+                                class_grade === this.studentForm.class_grade
+                            ) {
+                                this.$message({
+                                    type: "info",
+                                    center: true,
+                                    message: "信息未修改",
+                                });
+                                return;
+                            }
+                            // 信息有修改，发送请求
+                            let data = await studentChangeProfile(this.studentForm);
+                            this.judgeChangeProfile(data);
+                        }
+                        // 如果是导师
+                        if (this.tutorForm.title) {
+                            const { name, gender, tel, qq, introduction } =
+                                this.rawFormData;
+                            // 如果信息未做修改，直接返回，不发送请求
+                            if (
+                                name === this.tutorForm.name &&
+                                gender === this.tutorForm.gender &&
+                                tel === this.tutorForm.tel &&
+                                qq === this.tutorForm.qq &&
+                                introduction === this.tutorForm.introduction
+                            ) {
+                                this.$message({
+                                    type: "info",
+                                    center: true,
+                                    message: "信息未修改",
+                                });
+                                return;
+                            }
+                            // 信息有修改，发送请求
+                            let data = await tutorChangeProfile(this.tutorForm);
+                            this.judgeChangeProfile(data);
+                        }
+                    } else {
+                        // 校验失败
+                        return false;
+                    }
+                });
+            },
+
+            //  判断修改个人信息的响应结果
+            judgeChangeProfile(resData) {
+                if (resData) {
                     this.$message({
-                        message: "密码不能为空",
+                        type: "success",
+                        center: true,
+                        message: "修改成功",
+                    });
+                    // 重新只读
+                    this.isReadOnly = true;
+                    // 更新 rawFormData
+                    this.rawFormData = this.studentForm.major
+                        ? { ...this.studentForm }
+                        : { ...this.tutorForm };
+                    // 修改本地存储的登录信息
+                    let loginInfo = JSON.parse(
+                        localStorage.getItem("loginInformation")
+                    );
+                    let newLoginInfo = JSON.stringify({
+                        ...loginInfo,
+                        ...this.rawFormData,
+                    });
+                    localStorage.setItem("loginInformation", newLoginInfo);
+                    // 触发全局事件总线中绑定的事件
+                    this.$bus.$emit("profileHasChanged");
+                } else {
+                    this.$message({
+                        type: "error",
+                        center: true,
+                        message: "修改失败",
+                    });
+                }
+            },
+
+            // 取消修改基本资料
+            cancelChangeProfile(formRefName) {
+                this.$refs[formRefName].resetFields();
+                if (formRefName === "studentForm") {
+                    this.studentForm = { ...this.rawFormData };
+                }
+                if (formRefName === "tutorForm") {
+                    this.tutorForm = { ...this.rawFormData };
+                }
+                this.isReadOnly = true;
+            },
+
+            // 弹出不可更改的信息
+            showMessage() {
+                if (this.isReadOnly === false) {
+                    this.$message({
+                        type: "info",
+                        center: true,
+                        message: "此项不可修改，请联系管理员进行修改",
+                    });
+                }
+            },
+
+            // 点击修改密码
+            changePassword() {
+                this.dialogFormVisible = true;
+            },
+
+            // 确认修改密码
+            confirmChangePassword(formRefName) {
+                this.$refs[formRefName].validate(async (valid) => {
+                    if (valid) {
+                        if (this.studentForm.major) {
+                            // 如果有 major 信息, 就是学生身份
+                            const { id } = this.studentForm;
+                            const { password } = this.pwdForm;
+                            let data = await studentChangePassword(id, password);
+                            this.judgeChangePassword(data);
+                        } else if (this.tutorForm.title) {
+                            // 如果有 title 信息就是导师身份
+                            const { id } = this.tutorForm;
+                            const { password } = this.pwdForm;
+                            let data = await tutorChangePassword(id, password);
+                            this.judgeChangePassword(data);
+                        }
+                    } else {
+                        return false;
+                    }
+                });
+            },
+
+            // 判断修改密码的响应结果
+            judgeChangePassword(resData) {
+                if (resData) {
+                    this.dialogFormVisible = false;
+                    this.$message({
+                        message: "密码修改成功",
+                        type: "success",
+                        center: true,
+                    });
+                    setTimeout(() => {
+                        this.$message({
+                            message: "系统即将退出，请重新登录",
+                            type: "info",
+                            center: true,
+                        });
+                    }, 5000);
+                    setTimeout(() => {
+                        this.$bus.$emit("passwordHasChanged");
+                    }, 10000);
+                } else {
+                    this.dialogFormVisible = false;
+                    this.$message({
+                        message: "密码修改失败",
                         type: "error",
                         center: true,
                     });
-                    return;
                 }
-                const { id } = this.personInfo;
-                const password = this.password.trim();
-                // 如果有 major 信息, 就是学生身份
-                if (this.personInfo.major) {
-                    let data = await studentChangePassword(id, password);
-                    this.changePassword(data);
-                } else if (this.personInfo.title) {
-                    // 如果有 title 信息就是导师身份
-                    let data = await tutorChangePassword(id, password);
-                    this.changePassword(data);
-                }
+            },
+
+            // 取消修改密码
+            cancelChangePassword(formRefName) {
+                this.$refs[formRefName].resetFields();
+                this.dialogFormVisible = false;
             },
 
             // 双击课题名称时路由跳转
@@ -236,7 +637,7 @@
                     }
                 )
                     .then(async () => {
-                        const { id } = this.personInfo;
+                        const { id } = this.studentForm;
                         // 查询可重选的次数
                         let num = await getStudentOpportunity(id);
                         if (num) {
@@ -266,47 +667,25 @@
                     })
                     .catch(() => {});
             },
-
-            // 修改密码 (请求响应成功之后执行的逻辑)
-            changePassword(data) {
-                if (data) {
-                    this.$message({
-                        message: "密码修改成功",
-                        type: "success",
-                        center: true,
-                    });
-                    setTimeout(() => {
-                        this.$message({
-                            message: "系统即将退出，请重新登录",
-                            type: "info",
-                            center: true,
-                        });
-                    }, 4000);
-                    setTimeout(() => {
-                        this.$bus.$emit("passwordHasChanged");
-                    }, 8000);
-                } else {
-                    this.$message({
-                        message: "密码修改失败",
-                        type: "error",
-                        center: true,
-                    });
-                }
-                // 重新只读
-                this.isReadOnly = true;
-            },
         },
-        async beforeMount() {
-            // 解构赋值然后重命名
-            const { query: personInfo } = this.$route;
-            this.personInfo = personInfo;
 
+        async beforeMount() {
+            const { query } = this.$route;
             // 判断身份
+            // 如果路由传递过来的参数包含有 title , 则就是导师身份
+            if (query.title) {
+                this.tutorForm = { ...query };
+                this.rawFormData = { ...query };
+                this.refName = "tutorForm";
+            }
             // 如果路由传递过来的参数包含有 major , 则就是学生身份
-            if (personInfo.major) {
+            if (query.major) {
+                this.studentForm = { ...query };
+                this.rawFormData = { ...query };
+                this.refName = "studentForm";
                 // 查询学生选择的毕业设计题目
-                let data = await getStudentProject(personInfo.id);
-                this.personInfo = { ...this.personInfo, sProject: data };
+                let data = await getStudentProject(query.id);
+                this.studentForm = { ...this.studentForm, sProject: data };
             }
         },
 
@@ -380,5 +759,35 @@
     };
 </script>
 
-<style>
+<style lang="scss" scoped>
+    .description_wrap {
+        margin-top: 20px;
+        user-select: none;
+    }
+    .changeBox {
+        border: 1px solid #ebeef5;
+        height: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        button {
+            &:first-child {
+                margin-left: -25px;
+                margin-right: 40px;
+            }
+        }
+    }
+    .dialogForm {
+        .title {
+            border-bottom: 1px solid #ebeef5;
+            padding-bottom: 20px;
+            font-size: 20px;
+        }
+        .footer {
+            width: 170px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+    }
 </style>

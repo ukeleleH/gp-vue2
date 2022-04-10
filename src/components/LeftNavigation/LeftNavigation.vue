@@ -10,17 +10,7 @@
                     @select="handleSelect"
                 >
                     <router-link
-                        :to="{
-                            path: '/profile',
-                            query: {
-                                id: loginInformation.id,
-                                name: loginInformation.name,
-                                major: loginInformation.major,
-                                class_grade: loginInformation.class_grade,
-                                gender: loginInformation.gender,
-                                tel: loginInformation.tel,
-                            },
-                        }"
+                        :to="{ path: '/profile', query }"
                         v-show="loginInformation.major"
                     >
                         <el-menu-item index="1">
@@ -29,20 +19,7 @@
                         </el-menu-item>
                     </router-link>
                     <router-link
-                        :to="{
-                            path: '/profile',
-                            query: {
-                                id: loginInformation.id,
-                                name: loginInformation.name,
-                                qq: loginInformation.qq,
-                                title: loginInformation.title,
-                                gender: loginInformation.gender,
-                                degree: loginInformation.degree,
-                                tel: loginInformation.tel,
-                                isInsideSchool: loginInformation.isInsideSchool,
-                                introduction: loginInformation.introduction,
-                            },
-                        }"
+                        :to="{ path: '/profile', query }"
                         v-show="loginInformation.title"
                     >
                         <el-menu-item index="1">
@@ -159,6 +136,48 @@
                 activeIndex: "1",
             };
         },
+        computed: {
+            // 路由跳转的 query 参数
+            query() {
+                if (this.loginInformation.major) {
+                    // 学生身份
+                    const { id, name, major, class_grade, gender, tel } =
+                        this.loginInformation;
+                    return {
+                        id,
+                        name,
+                        major,
+                        class_grade,
+                        gender,
+                        tel,
+                    };
+                } else if (this.loginInformation.title) {
+                    // 导师身份
+                    const {
+                        id,
+                        name,
+                        qq,
+                        title,
+                        gender,
+                        degree,
+                        tel,
+                        isInsideSchool,
+                        introduction,
+                    } = this.loginInformation;
+                    return {
+                        id,
+                        name,
+                        qq,
+                        title,
+                        gender,
+                        degree,
+                        tel,
+                        isInsideSchool,
+                        introduction,
+                    };
+                }
+            },
+        },
         methods: {
             handleSelect(key) {
                 // 防止刷新后, 激活的索引丧失
@@ -167,14 +186,14 @@
             },
         },
         watch: {
-            // 监视路由地址的改变
+            // 监听路由地址的改变
             "$route.path": {
                 handler: function (newVal) {
                     if (newVal === "/my_project") {
                         this.activeIndex = "2-2";
                         // 防止刷新后, 激活的索引丧失
                         localStorage.setItem("activeIndex", "2-2");
-                    } else if (newVal === "/") {
+                    } else if (newVal === "/" || newVal === "/profile") {
                         this.activeIndex = "1";
                         // 防止刷新后, 激活的索引丧失
                         localStorage.setItem("activeIndex", "1");
@@ -182,56 +201,27 @@
                 },
                 immediate: true,
             },
+            // 监听个人基本信息的改变
+            loginInformation: {
+                handler: function () {
+                    this.$router.push({
+                        path: "/profile?1&",
+                        query: this.query,
+                    });
+                },
+                deep: true,
+            },
         },
         mounted() {
             // 获取索引
             this.activeIndex = localStorage.getItem("activeIndex");
-            const { identity, id, name } = this.loginInformation;
             const { path } = this.$route;
-            // 判断身份
-            if (identity === 1 && path === "/") {
-                // 解构赋值
-                const { major, class_grade, gender, tel } = this.loginInformation;
+            if (path === "/") {
                 // 编程式路由导航
                 setTimeout(() => {
                     this.$router.push({
                         path: "/profile",
-                        query: {
-                            id,
-                            name,
-                            major,
-                            class_grade,
-                            gender,
-                            tel,
-                        },
-                    });
-                }, 1000);
-            } else if (identity === 2 && path === "/") {
-                // 解构赋值
-                const {
-                    qq,
-                    title,
-                    gender,
-                    degree,
-                    tel,
-                    isInsideSchool,
-                    introduction,
-                } = this.loginInformation;
-                // 编程式路由导航
-                setTimeout(() => {
-                    this.$router.push({
-                        path: "/profile",
-                        query: {
-                            id,
-                            name,
-                            qq,
-                            title,
-                            gender,
-                            degree,
-                            tel,
-                            isInsideSchool,
-                            introduction,
-                        },
+                        query: this.query,
                     });
                 }, 1000);
             }

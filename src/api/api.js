@@ -27,6 +27,12 @@ export const updateStudentOpportunity = (id) => { return $axios.get(`/student/up
 // 更新学生已选课题的信息
 export const studentUpdateHasChooseProject = (id) => { return $axios.get(`/student/updateHasChooseProject?id=${id}`) }
 
+// 学生修改个人信息
+export const studentChangeProfile = (data) => { return $axios.post("/student/changeProfile", data) }
+
+// 导师修改个人信息
+export const tutorChangeProfile = (data) => { return $axios.post("/tutor/changeProfile", data) }
+
 // 学生修改密码
 export const studentChangePassword = (id, password) => { return $axios.get(`/student/changePassword?id=${id}&password=${password}`) }
 

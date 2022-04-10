@@ -69,6 +69,12 @@
         },
         mounted() {
             // 在全局事件总线上绑定事件
+            this.$bus.$on("profileHasChanged", () => {
+                // 当个人资料修改的时候,修改 data 里存储的登录信息
+                const loginInformation = localStorage.getItem("loginInformation");
+                this.loginInformation = JSON.parse(loginInformation);
+            });
+            // 在全局事件总线上绑定事件
             this.$bus.$on("passwordHasChanged", () => {
                 this.logout();
             });
