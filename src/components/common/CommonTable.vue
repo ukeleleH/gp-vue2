@@ -10,6 +10,7 @@
                 :sortable="item === 'id' ? true : false"
                 :key="item"
                 :prop="item"
+                :width="item | columnWidthFilter"
                 :label="item | labelFilter(dataList[0])"
             >
             </el-table-column>
@@ -20,9 +21,10 @@
 
 <script>
     import labelFilterMixin from "@/mixin/labelFilter.mixin";
+    import columnWidthFilter from "@/mixin/columnWidthFilter.mixin";
     export default {
         name: "CommonTable",
-        mixins: [labelFilterMixin],
+        mixins: [labelFilterMixin, columnWidthFilter],
         props: {
             height: {
                 type: Number,
