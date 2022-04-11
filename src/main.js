@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router';
 import App from './App.vue'
-// 导入二次封装的 axios
-import axios from "./api/request"
-Vue.prototype.$axios = axios
+// 自定义滚动条
+// import PerfectScrollbar from 'perfect-scrollbar';
+// // 引入滚动条样式
+// import "perfect-scrollbar/css/perfect-scrollbar.css"
 
 // 导入路由表
 import router from "./router"
