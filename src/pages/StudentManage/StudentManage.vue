@@ -7,18 +7,19 @@
             :dataList="allStudentList"
             :showDetail="changeStudent"
         >
-            <el-table-column slot="password" label="密码">
+            <el-table-column slot="password" label="密码" width="180px">
                 <template slot-scope="scope">
                     <el-input
                         v-model="scope.row.password"
                         type="password"
                         disabled
+                        style="width: 70%"
                     ></el-input>
                 </template>
             </el-table-column>
             <el-table-column
                 slot="operateArea"
-                min-width="100"
+                width="200px"
                 fixed="right"
                 align="right"
             >
@@ -161,8 +162,11 @@
         components: { CommonTabel, CommonForm, CommonDesc },
         data() {
             let checkStudentId = (_, value, callback) => {
-                if (!value) {
+                let reg = /^\d{10}$/;
+                if (value === "") {
                     callback(new Error("请输入学生学号"));
+                } else if (!reg.test(value)) {
+                    callback(new Error("学号只能是10位数字"));
                 } else {
                     // 查询是否存在
                     adminIsUniqueStudentId(value.trim()).then((data) => {
@@ -172,6 +176,30 @@
                             callback();
                         }
                     });
+                }
+            };
+            let validatePass = (rule, value, callback) => {
+                let reg = /^\w{8,20}$/;
+                if (value === "") {
+                    callback(new Error("请配置学生初始密码"));
+                } else if (!reg.test(value)) {
+                    callback(
+                        new Error("密码只能包含字母、数字、下划线，且长度至少8位")
+                    );
+                } else {
+                    callback();
+                }
+            };
+            let checkTel = (rule, value, callback) => {
+                let reg = /^(13\d|14[579]|15[^4\D]|17[^49\D]|18\d)\d{8}$/;
+                if (value === "") {
+                    callback(new Error("请输入学生手机号"));
+                } else if (value.length !== 11) {
+                    callback(new Error("格式不正确，请输入11位手机号"));
+                } else if (!reg.test(value)) {
+                    callback(new Error("格式不正确，手机号以13/4/5/7/8开头"));
+                } else {
+                    callback();
                 }
             };
             return {
@@ -205,24 +233,12 @@
                 },
                 studentFormRules: {
                     id: [{ validator: checkStudentId, trigger: "blur" }],
-                    password: [
-                        {
-                            required: true,
-                            message: "请配置学生初始密码",
-                            trigger: "blur",
-                        },
-                    ],
+                    password: [{ validator: validatePass, trigger: "blur" }],
+                    tel: [{ validator: checkTel, trigger: "blur" }],
                     name: [
                         {
                             required: true,
                             message: "请输入学生姓名",
-                            trigger: "blur",
-                        },
-                    ],
-                    tel: [
-                        {
-                            required: true,
-                            message: "请输入学生手机号",
                             trigger: "blur",
                         },
                     ],

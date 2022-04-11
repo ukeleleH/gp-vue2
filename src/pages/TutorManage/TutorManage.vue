@@ -7,13 +7,22 @@
             :dataList="allTutorList"
             :showDetail="changeTutor"
         >
-            <el-table-column slot="password" label="密码">
+            <el-table-column slot="password" label="密码" width="180px">
                 <template slot-scope="{ row }">
-                    <el-input v-model="row.password" type="password" disabled>
+                    <el-input
+                        v-model="row.password"
+                        type="password"
+                        disabled
+                        style="width: 70%"
+                    >
                     </el-input>
                 </template>
             </el-table-column>
-            <el-table-column slot="isInsideSchool" label="是否本校">
+            <el-table-column
+                slot="isInsideSchool"
+                label="是否本校"
+                width="130px"
+            >
                 <template slot-scope="{ row }">
                     <span
                         :style="
@@ -28,7 +37,7 @@
             </el-table-column>
             <el-table-column
                 slot="operateArea"
-                min-width="150"
+                width="200px"
                 fixed="right"
                 align="right"
             >
@@ -178,9 +187,12 @@
         name: "TutorManage",
         components: { CommonTabel, CommonForm, CommonDesc },
         data() {
-            let checkTutorId = (_, value, callback) => {
+            let checkTutorId = (rule, value, callback) => {
+                let reg = /^\d{8,10}$/;
                 if (!value) {
                     callback(new Error("请输入导师工号"));
+                } else if (!reg.test(value)) {
+                    callback(new Error("工号只能是数字,且至少8位"));
                 } else {
                     // 查询是否存在
                     adminIsUniqueTutorId(value.trim()).then((data) => {
@@ -191,6 +203,47 @@
                             callback();
                         }
                     });
+                }
+            };
+            let validatePass = (rule, value, callback) => {
+                let reg = /^\w{8,20}$/;
+                if (value === "") {
+                    callback(new Error("请配置导师初始密码"));
+                } else if (!reg.test(value)) {
+                    callback(
+                        new Error("密码只能包含字母、数字、下划线，且长度至少8位")
+                    );
+                } else {
+                    callback();
+                }
+            };
+            let checkTel = (rule, value, callback) => {
+                let reg = /^(13\d|14[579]|15[^4\D]|17[^49\D]|18\d)\d{8}$/;
+                if (value === "") {
+                    callback(new Error("请输入导师手机号"));
+                } else if (value.length !== 11) {
+                    callback(new Error("格式不正确，请输入11位手机号"));
+                } else if (!reg.test(value)) {
+                    callback(new Error("格式不正确，手机号以13/4/5/7/8开头"));
+                } else {
+                    callback();
+                }
+            };
+            let checkQQ = (rule, value, callback) => {
+                let reg = /^\d{6,12}$/;
+                if (!reg.test(value)) {
+                    callback(new Error("QQ号只能是数字,且为6-12位"));
+                } else {
+                    callback();
+                }
+            };
+            let checkIntro = (rule, value, callback) => {
+                if (value.trim() === "") {
+                    callback(new Error("导师介绍不能为空"));
+                } else if (value.length < 10) {
+                    callback(new Error("请至少输入10个字"));
+                } else {
+                    callback();
                 }
             };
             return {
@@ -226,17 +279,14 @@
                     title: "",
                     degree: "",
                     inInsideSchool: "",
-                    intruduction: "",
+                    introduction: "",
                 },
                 tutorFormRules: {
                     id: [{ validator: checkTutorId, trigger: "blur" }],
-                    password: [
-                        {
-                            required: true,
-                            message: "请配置导师初始密码",
-                            trigger: "blur",
-                        },
-                    ],
+                    password: [{ validator: validatePass, trigger: "blur" }],
+                    tel: [{ validator: checkTel, trigger: "blur" }],
+                    qq: [{ validator: checkQQ, trigger: "blur" }],
+                    introduction: [{ validator: checkIntro, trigger: "blur" }],
                     name: [
                         {
                             required: true,
@@ -244,23 +294,10 @@
                             trigger: "blur",
                         },
                     ],
-                    tel: [
-                        {
-                            required: true,
-                            message: "请输入导师手机号",
-                            trigger: "blur",
-                        },
-                    ],
                     gender: [
                         {
                             required: true,
                             message: "请选择导师性别",
-                        },
-                    ],
-                    qq: [
-                        {
-                            required: true,
-                            message: "请输入导师QQ号",
                         },
                     ],
                     title: [
@@ -279,12 +316,6 @@
                         {
                             required: true,
                             message: "请选择导师是否本校",
-                        },
-                    ],
-                    intruduction: [
-                        {
-                            required: true,
-                            message: "请填写导师介绍",
                         },
                     ],
                 },

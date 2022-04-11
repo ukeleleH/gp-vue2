@@ -335,7 +335,7 @@
         name: "Profile",
         data() {
             // 密码校验规则
-            var validatePass = (rule, value, callback) => {
+            let validatePass = (rule, value, callback) => {
                 let reg = /^\w{8,20}$/;
                 if (value === "") {
                     callback(new Error("请输入新密码"));
@@ -349,7 +349,7 @@
                 }
             };
             // 确认密码校验规则
-            var validateCheckPass = (rule, value, callback) => {
+            let validateCheckPass = (rule, value, callback) => {
                 if (value === "") {
                     callback(new Error("请再一次输入新密码"));
                 } else if (value !== this.pwdForm.password) {
@@ -359,7 +359,7 @@
                 }
             };
             // 手机号校验规则
-            var checkTel = (rule, value, callback) => {
+            let checkTel = (rule, value, callback) => {
                 let reg = /^(13\d|14[579]|15[^4\D]|17[^49\D]|18\d)\d{8}$/;
                 if (value === "") {
                     callback(new Error("手机号不能为空"));
@@ -372,7 +372,7 @@
                 }
             };
             // QQ号的校验规则
-            var checkQQ = (rule, value, callback) => {
+            let checkQQ = (rule, value, callback) => {
                 let reg = /^\d{6,12}$/;
                 if (!reg.test(value)) {
                     callback(new Error("QQ号只能是数字,且为6-12位"));
@@ -381,8 +381,8 @@
                 }
             };
             // 导师介绍的校验规则
-            var checkIntro = (rule, value, callback) => {
-                if (value === "") {
+            let checkIntro = (rule, value, callback) => {
+                if (value.trim() === "") {
                     callback(new Error("个人介绍不能为空"));
                 } else if (value.length < 10) {
                     callback(new Error("请至少输入10个字"));
