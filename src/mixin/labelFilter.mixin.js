@@ -19,6 +19,8 @@ export default {
                     return "专业";
                 case "class_grade":
                     return "班级";
+                case "opportunity":
+                    return "重选次数";
                 case "qq":
                     return "QQ号";
                 case "title":

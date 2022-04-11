@@ -8,7 +8,7 @@ export default {
                 case "name":
                     return 32;
                 case "password":
-                    return 32;
+                    return 20;
                 case "tel":
                     return 11;
                 case "gender":
@@ -18,7 +18,7 @@ export default {
                 case "class_grade":
                     return 32;
                 case "qq":
-                    return 32;
+                    return 12;
                 case "title":
                     return 10;
                 case "degree":
