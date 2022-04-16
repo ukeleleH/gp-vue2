@@ -1,168 +1,204 @@
 <template>
-    <div class="all_project_container">
-        <!-- 展示课题的表格 -->
-        <el-table
-            :data="keyword ? filterAllProjectList : currentProjectList"
-            stripe
-            :height="650"
-            style="width: 100%; user-select: none"
-            @row-dblclick="showProjectDetail"
+    <div>
+        <el-breadcrumb
+            separator-class="el-icon-arrow-right"
+            class="breadcrumb"
+            v-show="$route.name === 'projectDetail'"
         >
-            <el-table-column prop="name" label="题目名称" min-width="350">
-            </el-table-column>
-            <el-table-column prop="source" label="来源" min-width="140">
-            </el-table-column>
-            <el-table-column prop="demand" label="要求" min-width="300">
-            </el-table-column>
-            <el-table-column
-                prop="tutor"
-                label="导师"
-                min-width="130"
-                :sortable="true"
-                :sort-by="['tutor', 'name']"
-            >
-            </el-table-column>
-            <el-table-column label="状态" min-width="130">
-                <template slot-scope="scope">
-                    <span
-                        :style="
-                            scope.row.studentId
-                                ? { color: 'green' }
-                                : { color: 'red' }
-                        "
-                        >{{ scope.row.studentId ? "已被选" : "未被选" }}</span
-                    >
-                </template>
-            </el-table-column>
-            <!-- 学生登录时显示的部分 -->
-            <el-table-column
-                min-width="160"
-                fixed="right"
-                align="right"
-                v-if="loginInformation.major"
-            >
-                <template slot="header" slot-scope="scope">
-                    <el-input
-                        prefix-icon="el-icon-search"
-                        v-model="keyword"
-                        size="small"
-                        placeholder="搜索题目或导师"
-                        @input="handleSearch(scope._self.keyword)"
-                    />
-                </template>
-                <template slot-scope="scope">
-                    <el-button
-                        type="primary"
-                        icon="el-icon-check"
-                        size="mini"
-                        :disabled="
-                            isMeHaveChoosen
-                                ? true
-                                : scope.row.studentId
-                                ? true
-                                : false
-                        "
-                        @click.native.prevent="chooseProject(scope.row)"
-                    >
-                        选择
-                    </el-button>
-                </template>
-            </el-table-column>
-            <!-- 导师登录时显示的部分 -->
-            <el-table-column min-width="160" fixed="right" align="right" v-else>
-                <template slot="header" slot-scope="scope">
-                    <el-input
-                        prefix-icon="el-icon-search"
-                        v-model="keyword"
-                        size="small"
-                        placeholder="搜索题目或导师"
-                        @input="handleSearch(scope._self.keyword)"
-                    />
-                </template>
-                <template slot-scope="scope">
-                    <el-button
-                        type="primary"
-                        icon="el-icon-reading"
-                        size="mini"
-                        @click.native.prevent="showProjectDetail(scope.row)"
-                    >
-                        查看详情
-                    </el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-
-        <!-- 未过滤的分页 -->
-        <div class="pagination_wrap" v-show="keyword ? false : true">
-            <el-pagination
-                layout="prev, pager, next,total"
-                :total="totalNum"
-                :pager-count="5"
-                :page-size="10"
-                @current-change="handleCurrentChange"
-            >
-            </el-pagination>
-        </div>
-        <!-- 过滤后的分页 -->
-        <div class="pagination_wrap" v-show="keyword">
-            <el-pagination
-                layout="prev, pager, next,total"
-                :total="filtersTotalNum"
-                :pager-count="5"
-                :page-size="10"
-                @current-change="handleFilterCurrentChange"
-            >
-            </el-pagination>
-        </div>
-
-        <!-- 课题详情的弹出消息框 -->
-        <el-dialog
-            :visible.sync="dialogVisible"
-            width="1000px"
-            center
-            top="30vh"
-            title="课题详情"
+            <el-breadcrumb-item :to="{ path: '/all_project' }">
+                <span> 全部选题 </span>
+            </el-breadcrumb-item>
+            <el-breadcrumb-item>
+                <span class="breadcrumb_item"> 选题详情 </span>
+            </el-breadcrumb-item>
+        </el-breadcrumb>
+        <div
+            v-if="$route.path === '/all_project'"
+            class="all_project_container"
         >
-            <!-- 课题详情的描述列表 -->
-            <el-descriptions :title="description.name" :column="3">
-                <el-descriptions-item label="课题ID">
-                    {{ description.id }}
-                </el-descriptions-item>
-                <el-descriptions-item label="名称">
-                    {{ description.name }}
-                </el-descriptions-item>
-                <el-descriptions-item label="内容">
-                    {{ description.content }}
-                </el-descriptions-item>
-                <el-descriptions-item label="学生学号">
-                    <span
-                        :style="
-                            description.studentId
-                                ? { color: 'green' }
-                                : { color: 'red' }
-                        "
-                    >
-                        {{
-                            description.studentId
-                                ? description.studentId
-                                : "未被选"
-                        }}
-                    </span>
-                </el-descriptions-item>
-                <el-descriptions-item label="所属导师">
-                    {{ description.tutor }}
-                </el-descriptions-item>
-                <el-descriptions-item label="性质">
-                    {{ description.nature }}
-                </el-descriptions-item>
-                <el-descriptions-item label="来源">
-                    {{ description.source }}
-                </el-descriptions-item>
-                <el-descriptions-item label="要求">
-                    {{ description.demand }}
-                </el-descriptions-item>
-            </el-descriptions>
-        </el-dialog>
+            <!-- 展示课题的表格 -->
+            <el-table
+                :data="keyword ? filterAllProjectList : currentProjectList"
+                stripe
+                :height="650"
+                style="width: 100%; user-select: none"
+                @row-dblclick="showProjectDetail"
+            >
+                <el-table-column prop="name" label="题目名称" min-width="320">
+                </el-table-column>
+                <el-table-column prop="source" label="来源" min-width="140">
+                </el-table-column>
+                <el-table-column prop="demand" label="要求" min-width="300">
+                </el-table-column>
+                <el-table-column
+                    prop="tutor"
+                    label="导师"
+                    min-width="130"
+                    :sortable="true"
+                    :sort-by="['tutor', 'name']"
+                >
+                </el-table-column>
+                <el-table-column label="状态" min-width="130">
+                    <template slot-scope="scope">
+                        <span
+                            :style="
+                                scope.row.studentId
+                                    ? { color: 'green' }
+                                    : { color: 'red' }
+                            "
+                            >{{
+                                scope.row.studentId ? "已被选" : "未被选"
+                            }}</span
+                        >
+                    </template>
+                </el-table-column>
+                <!-- 学生登录时显示的部分 -->
+                <el-table-column
+                    min-width="200"
+                    fixed="right"
+                    align="right"
+                    v-if="loginInformation.major"
+                >
+                    <template slot="header" slot-scope="scope">
+                        <el-input
+                            prefix-icon="el-icon-search"
+                            v-model="keyword"
+                            size="small"
+                            placeholder="搜索题目或导师"
+                            @input="handleSearch(scope._self.keyword)"
+                        />
+                    </template>
+                    <template slot-scope="scope">
+                        <el-button
+                            type="primary"
+                            icon="el-icon-check"
+                            size="mini"
+                            :disabled="
+                                isMeHaveChoosen
+                                    ? true
+                                    : scope.row.studentId
+                                    ? true
+                                    : false
+                            "
+                            @click.native.prevent="chooseProject(scope.row)"
+                        >
+                            选择
+                        </el-button>
+                        <el-button
+                            type="primary"
+                            icon="el-icon-reading"
+                            size="mini"
+                            @click.native.prevent="goToDetail(scope.row)"
+                        >
+                            查看详情
+                        </el-button>
+                    </template>
+                </el-table-column>
+                <!-- 导师登录时显示的部分 -->
+                <el-table-column
+                    min-width="130"
+                    fixed="right"
+                    align="right"
+                    v-else
+                >
+                    <template slot="header" slot-scope="scope">
+                        <el-input
+                            prefix-icon="el-icon-search"
+                            v-model="keyword"
+                            size="small"
+                            placeholder="搜索题目或导师"
+                            @input="handleSearch(scope._self.keyword)"
+                        />
+                    </template>
+                    <template slot-scope="scope">
+                        <el-button
+                            type="primary"
+                            icon="el-icon-reading"
+                            size="mini"
+                            @click.native.prevent="goToDetail(scope.row)"
+                        >
+                            查看详情
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <!-- 未过滤的分页 -->
+            <div class="pagination_wrap" v-show="keyword ? false : true">
+                <el-pagination
+                    layout="prev, pager, next,total"
+                    :total="totalNum"
+                    :pager-count="5"
+                    :page-size="10"
+                    @current-change="handleCurrentChange"
+                >
+                </el-pagination>
+            </div>
+            <!-- 过滤后的分页 -->
+            <div class="pagination_wrap" v-show="keyword">
+                <el-pagination
+                    layout="prev, pager, next,total"
+                    :total="filtersTotalNum"
+                    :pager-count="5"
+                    :page-size="10"
+                    @current-change="handleFilterCurrentChange"
+                >
+                </el-pagination>
+            </div>
+
+            <!-- 课题详情的弹出消息框 -->
+            <el-dialog
+                :visible.sync="dialogVisible"
+                width="1000px"
+                center
+                top="30vh"
+                title="课题详情"
+            >
+                <!-- 课题详情的描述列表 -->
+                <el-descriptions :title="description.name" :column="3">
+                    <el-descriptions-item label="课题ID">
+                        {{ description.id }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="名称">
+                        {{ description.name }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="内容">
+                        {{ description.content }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="学生学号">
+                        <span
+                            :style="
+                                description.studentId
+                                    ? { color: 'green' }
+                                    : { color: 'red' }
+                            "
+                        >
+                            {{
+                                description.studentId
+                                    ? description.studentId
+                                    : "未被选"
+                            }}
+                        </span>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="所属导师">
+                        {{ description.tutor }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="性质">
+                        {{ description.nature }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="来源">
+                        {{ description.source }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="要求">
+                        {{ description.demand }}
+                    </el-descriptions-item>
+                </el-descriptions>
+            </el-dialog>
+        </div>
+        <div v-else>
+            <!-- 显示子路由：课题详情 -->
+            <router-view></router-view>
+        </div>
     </div>
 </template>
 
@@ -239,12 +275,20 @@
                 }
             },
 
-            // 查看详情 (双击和点击查看按钮)
+            // 双击弹出详情的 dialog
             showProjectDetail(row) {
                 // 调整消息弹框可见
                 this.dialogVisible = true;
                 // 将行的数据存入 description
                 this.description = row;
+            },
+
+            // 跳转详情页
+            goToDetail(project) {
+                this.$router.push({
+                    name: "projectDetail",
+                    params: project,
+                });
             },
 
             // 点击选择按钮
@@ -371,6 +415,15 @@
 </script>
 
 <style lang="scss" scoped>
+    .breadcrumb {
+        margin-top: 20px;
+        font-size: 14px;
+        user-select: none;
+        .breadcrumb_item {
+            color: #409eff;
+            cursor: pointer;
+        }
+    }
     .pagination_wrap {
         text-align: center;
         margin-top: 30px;
