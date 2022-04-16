@@ -1,32 +1,41 @@
 <template>
-    <div class="header_wrap">
-        <div class="school_badge_wrap">
-            <a href="http://www.ndkj.com.cn/" target="_new">
-                <img src="@/assets/校徽.png" />
-            </a>
-        </div>
-        <div class="school_name_chinese">
-            <a href="http://www.ndkj.com.cn/" target="_new">
-                <img src="@/assets/南大中文.png" />
-            </a>
-        </div>
-        <div class="school_name_english">
-            <a href="http://www.ndkj.com.cn/" target="_new">
-                <img src="@/assets/南大英文.png" />
-            </a>
-        </div>
-        <h1>毕业设计(论文)互动平台</h1>
-        <div class="login_name" v-if="isLogin">
-            欢迎你,&nbsp;
-            <i @click="goProfile" :class="{ current: current }">
-                {{ loginInformation.name }}
-            </i>
-            <span>&nbsp;&nbsp;({{ identity }})</span>
-        </div>
-        <el-button size="mini" type="danger" @click="logout" v-if="isLogin">
-            退出登录
-        </el-button>
-    </div>
+    <el-row>
+        <el-col :span="spanValue" :offset="offsetValue">
+            <div class="header_wrap">
+                <div class="school_badge_wrap">
+                    <a href="http://www.ndkj.com.cn/" target="_new">
+                        <img src="@/assets/校徽removebg.png" />
+                    </a>
+                </div>
+                <div class="school_name_chinese">
+                    <a href="http://www.ndkj.com.cn/" target="_new">
+                        <img src="@/assets/南大中文removebg.png" />
+                    </a>
+                </div>
+                <div class="school_name_english">
+                    <a href="http://www.ndkj.com.cn/" target="_new">
+                        <img src="@/assets/南大英文removebg.png" />
+                    </a>
+                </div>
+                <h1>毕业设计(论文)互动平台</h1>
+                <div class="login_name" v-if="isLogin">
+                    欢迎你,&nbsp;
+                    <i @click="goProfile" :class="{ current: current }">
+                        {{ loginInformation.name }}
+                    </i>
+                    <span>&nbsp;&nbsp;({{ identity }})</span>
+                </div>
+                <el-button
+                    size="mini"
+                    type="danger"
+                    @click="logout"
+                    v-if="isLogin"
+                >
+                    退出登录
+                </el-button>
+            </div>
+        </el-col>
+    </el-row>
 </template>
 
 <script>
@@ -44,6 +53,14 @@
                 if (this.loginInformation.identity === 1) return true;
                 if (this.loginInformation.identity === 2) return true;
                 if (this.loginInformation.identity === 3) return false;
+            },
+            spanValue() {
+                if (this.isLogin) return 19;
+                else return 24;
+            },
+            offsetValue() {
+                if (this.isLogin) return 4;
+                else return 0;
             },
         },
         methods: {
