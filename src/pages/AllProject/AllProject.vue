@@ -270,7 +270,7 @@
                 if (this.loginInformation.major) {
                     // 遍历所有的课题列表，如果有课题列表的 studentId 等于我的 id，则表示我已经选择了课题
                     this.isMeHaveChoosen = this.allProjectList.some((item) => {
-                        return item.studentId === this.loginInformation.id;
+                        return item.studentId == this.loginInformation.id;
                     });
                 }
             },
