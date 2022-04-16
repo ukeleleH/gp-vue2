@@ -1,6 +1,7 @@
 import VueRouter from "vue-router"
 import Profile from "@/pages/Profile/Profile.vue"
 import AllProject from "@/pages/AllProject/AllProject.vue"
+import ProjectDetail from "@/pages/AllProject/ProjectDetail/ProjectDetail.vue"
 import MyProject from "@/pages/MyProject/MyProject.vue"
 import HasPublishedProject from "@/pages/HasPublishedProject/HasPublishedProject.vue"
 import OpeningReport from "@/pages/OpeningReport/OpeningReport.vue"
@@ -8,6 +9,7 @@ import DocumentTranslation from "@/pages/DocumentTranslation/DocumentTranslation
 import DatabaseDesign from "@/pages/DatabaseDesign/DatabaseDesign.vue"
 import StudentManage from "@/pages/StudentManage/StudentManage.vue"
 import TutorManage from "@/pages/TutorManage/TutorManage.vue"
+import NotFound from "@/components/NotFound.vue"
 
 import { MessageBox } from 'element-ui'
 
@@ -21,7 +23,15 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         { path: "/profile", component: Profile },
-        { path: "/all_project", component: AllProject },
+        {
+            path: "/all_project",
+            component: AllProject,
+            children: [{
+                name: 'projectDetail',
+                path: "project_detail/:content/:demand/:id/:name/:nature/:source/:studentId/:tutor/:tutorId",
+                component: ProjectDetail
+            }]
+        },
         { path: "/my_project", component: MyProject },
         { path: "/has_published_project", component: HasPublishedProject },
         { path: "/opening_report", component: OpeningReport },
