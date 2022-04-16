@@ -71,105 +71,134 @@
 
         <!-- 课题详情的描述列表 (修改课题信息时) -->
         <template>
-            <el-descriptions
-                :title="description.name"
-                :column="3"
-                class="updateDescription"
-                v-show="isDescShow"
-                border
-            >
-                <template slot="extra">
-                    <el-button
-                        type="primary"
-                        size="small"
-                        @click="pullUpDetail"
-                    >
-                        收起
-                    </el-button>
-                </template>
-                <el-descriptions-item label="课题ID">
-                    <el-input disabled v-model="description.id"></el-input>
-                </el-descriptions-item>
-                <el-descriptions-item label="名称">
-                    <el-input
-                        v-model="description.name"
-                        maxlength="30"
-                        show-word-limit
-                    ></el-input>
-                </el-descriptions-item>
-                <el-descriptions-item label="来源">
-                    <el-select
-                        v-model="description.source"
-                        placeholder="请选择"
-                    >
-                        <el-option label="省部级以上" value="省部级以上">
-                        </el-option>
-                        <el-option label="横向且有经费" value="横向且有经费">
-                        </el-option>
-                        <el-option label="自选" value="自选"> </el-option>
-                        <el-option label="市厅级" value="市厅级"> </el-option>
-                    </el-select>
-                </el-descriptions-item>
-                <el-descriptions-item label="学生学号">
-                    <!-- 存在学生学号, 则表示已被选, 不可以修改 -->
-                    <template v-if="description.studentId">
-                        <el-input
-                            disabled
-                            v-model="description.studentId"
-                        ></el-input>
-                    </template>
-                    <!-- 否则, 未被选 -->
-                    <template v-else>
-                        <span style="color: red">未被选</span>
-                    </template>
-                </el-descriptions-item>
-                <el-descriptions-item label="性质">
-                    <el-select
-                        v-model="description.nature"
-                        placeholder="请选择"
-                    >
-                        <el-option label="实际应用" value="实际应用">
-                        </el-option>
-                        <el-option label="理论研究" value="理论研究">
-                        </el-option>
-                        <el-option
-                            label="实际应用与理论研究"
-                            value="实际应用与理论研究"
+            <el-form ref="changeDesc" :model="description" :rules="changeRules">
+                <el-descriptions
+                    :title="description.name"
+                    :column="3"
+                    class="updateDescription"
+                    v-show="isDescShow"
+                    border
+                >
+                    <template slot="extra">
+                        <el-button
+                            type="primary"
+                            size="small"
+                            @click="pullUpDetail"
                         >
-                        </el-option>
-                    </el-select>
-                </el-descriptions-item>
-                <el-descriptions-item label="要求">
-                    <el-input
-                        v-model="description.demand"
-                        maxlength="255"
-                        show-word-limit
-                    ></el-input>
-                </el-descriptions-item>
-                <el-descriptions-item label="内容" :span="3">
-                    <el-input
-                        type="textarea"
-                        v-model="description.content"
-                        maxlength="255"
-                        show-word-limit
-                        :autosize="{ minRows: 2, maxRows: 6 }"
-                    ></el-input>
-                </el-descriptions-item>
-            </el-descriptions>
+                            收起
+                        </el-button>
+                    </template>
+                    <el-descriptions-item label="课题ID">
+                        <el-form-item>
+                            <el-input
+                                disabled
+                                v-model="description.id"
+                            ></el-input>
+                        </el-form-item>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="名称">
+                        <el-form-item prop="name">
+                            <el-input
+                                v-model="description.name"
+                                maxlength="30"
+                                show-word-limit
+                            ></el-input>
+                        </el-form-item>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="来源">
+                        <el-form-item>
+                            <el-select
+                                v-model="description.source"
+                                placeholder="请选择"
+                                style="width: 100%"
+                            >
+                                <el-option
+                                    label="省部级以上"
+                                    value="省部级以上"
+                                >
+                                </el-option>
+                                <el-option
+                                    label="横向且有经费"
+                                    value="横向且有经费"
+                                >
+                                </el-option>
+                                <el-option label="自选" value="自选">
+                                </el-option>
+                                <el-option label="市厅级" value="市厅级">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="学生学号">
+                        <el-form-item>
+                            <!-- 存在学生学号, 则表示已被选, 不可以修改 -->
+                            <template v-if="description.studentId">
+                                <el-input
+                                    disabled
+                                    v-model="description.studentId"
+                                ></el-input>
+                            </template>
+                            <!-- 否则, 未被选 -->
+                            <template v-else>
+                                <span style="color: red">未被选</span>
+                            </template>
+                        </el-form-item>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="性质">
+                        <el-form-item>
+                            <el-select
+                                v-model="description.nature"
+                                placeholder="请选择"
+                                style="width: 100%"
+                            >
+                                <el-option label="实际应用" value="实际应用">
+                                </el-option>
+                                <el-option label="理论研究" value="理论研究">
+                                </el-option>
+                                <el-option
+                                    label="实际应用与理论研究"
+                                    value="实际应用与理论研究"
+                                >
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="要求">
+                        <el-form-item prop="demand">
+                            <el-input
+                                v-model="description.demand"
+                                maxlength="255"
+                                show-word-limit
+                            ></el-input>
+                        </el-form-item>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="内容" :span="3">
+                        <el-form-item prop="content">
+                            <el-input
+                                type="textarea"
+                                v-model="description.content"
+                                maxlength="255"
+                                show-word-limit
+                                :autosize="{ minRows: 2, maxRows: 6 }"
+                            ></el-input>
+                        </el-form-item>
+                    </el-descriptions-item>
+                </el-descriptions>
+            </el-form>
             <!-- 修改的按钮 -->
             <div class="updateBtn_container" v-show="isDescShow">
                 <el-button
                     type="success"
                     plain
                     size="small"
-                    @click="confirmChange"
+                    @click="confirmChange('changeDesc')"
                     >确认修改</el-button
                 >
                 <el-button
                     type="warning"
                     plain
                     size="small"
-                    @click="cancelChange"
+                    @click="cancelChange('changeDesc')"
                     >取消修改</el-button
                 >
             </div>
@@ -179,7 +208,7 @@
         <template>
             <el-form
                 :model="newProject"
-                :rules="rules"
+                :rules="addRules"
                 ref="newProject"
                 v-show="isNewShow"
             >
@@ -207,6 +236,7 @@
                             <el-select
                                 v-model="newProject.source"
                                 placeholder="请选择"
+                                style="width: 100%"
                             >
                                 <el-option
                                     label="省部级以上"
@@ -231,6 +261,7 @@
                                 name="nature"
                                 v-model="newProject.nature"
                                 placeholder="请选择"
+                                style="width: 100%"
                             >
                                 <el-option label="实际应用" value="实际应用">
                                 </el-option>
@@ -260,6 +291,7 @@
                                 v-model="newProject.content"
                                 maxlength="255"
                                 show-word-limit
+                                resize="none"
                                 :autosize="{ minRows: 2, maxRows: 6 }"
                             ></el-input>
                         </el-form-item>
@@ -300,19 +332,63 @@
     export default {
         name: "HasPublishedProject",
         data() {
-            // 自定义校验规则
-            let checkNewProjectName = (_, value, callback) => {
-                if (!value) {
+            // 新增课题时的名称的校验规则
+            let checkNewProjectName = async (rule, value, callback) => {
+                if (!value.trim()) {
                     callback(new Error("名称不能为空"));
                 } else {
                     // 查询是否存在
-                    tutorIsUniqueProjectName(value.trim()).then((data) => {
-                        if (data) {
-                            callback(new Error("课题名称已存在"));
-                        } else {
+                    let data = await tutorIsUniqueProjectName(value);
+                    if (data) {
+                        callback(new Error("课题名称已存在"));
+                    } else {
+                        callback();
+                    }
+                }
+            };
+            // 修改课题时名称的校验规则
+            let checkProjectName = async (rule, value, callback) => {
+                if (!value.trim()) {
+                    callback(new Error("名称不能为空"));
+                } else {
+                    // 查询是否存在
+                    let data = await tutorIsUniqueProjectName(value);
+                    if (data) {
+                        let { id } = JSON.parse(
+                            localStorage.getItem("loginInformation")
+                        );
+                        let { id: projectId } = this.description;
+                        // 如果该课题是我自己的,且该课题 id 与我正在修改的课题的 id 一样
+                        // 防止一个导师有两个相同名称的课题
+                        if (data.tutorId === id && data.id === projectId) {
                             callback();
+                        } else {
+                            // 否则是别的导师的
+                            callback(new Error("课题名称已存在"));
                         }
-                    });
+                    } else {
+                        callback();
+                    }
+                }
+            };
+            // 课题要求校验规则
+            let checkDemand = (rule, value, callback) => {
+                if (value.trim() === "") {
+                    callback(new Error("课题要求不能为空"));
+                } else if (value.length < 10) {
+                    callback(new Error("请至少输入10个字"));
+                } else {
+                    callback();
+                }
+            };
+            // 课题内容校验规则
+            let checkContent = (rule, value, callback) => {
+                if (value.trim() === "") {
+                    callback(new Error("课题内容不能为空"));
+                } else if (value.length < 10) {
+                    callback(new Error("请至少输入10个字"));
+                } else {
+                    callback();
                 }
             };
             return {
@@ -335,41 +411,22 @@
                 isDescShow: false,
                 // 新增列表的是否显示
                 isNewShow: false,
-                // 校验规则
-                rules: {
-                    name: [
-                        {
-                            validator: checkNewProjectName,
-                            trigger: "blur",
-                        },
-                    ],
+                // 修改课题时的校验规则
+                changeRules: {
+                    name: [{ validator: checkProjectName, trigger: "blur" }],
+                    content: [{ validator: checkContent, trigger: "blur" }],
+                    demand: [{ validator: checkDemand, trigger: "blur" }],
+                },
+                // 新增课题时的校验规则
+                addRules: {
+                    name: [{ validator: checkNewProjectName, trigger: "blur" }],
+                    content: [{ validator: checkContent, trigger: "blur" }],
+                    demand: [{ validator: checkDemand, trigger: "blur" }],
                     source: [
-                        {
-                            required: true,
-                            message: "请选择来源",
-                            trigger: "change",
-                        },
+                        { required: true, message: "请选择来源", trigger: "blur" },
                     ],
                     nature: [
-                        {
-                            required: true,
-                            message: "请选择性质",
-                            trigger: "change",
-                        },
-                    ],
-                    demand: [
-                        {
-                            required: true,
-                            message: "要求不能为空",
-                            trigger: "blur",
-                        },
-                    ],
-                    content: [
-                        {
-                            required: true,
-                            message: "内容不能为空",
-                            trigger: "blur",
-                        },
+                        { required: true, message: "请选择性质", trigger: "blur" },
                     ],
                 },
             };
@@ -413,7 +470,7 @@
             },
 
             // 点击确认修改按钮
-            async confirmChange() {
+            confirmChange(refName) {
                 let { name, nature, source, demand, content } = this.description;
                 if (
                     name === this.rawRowData.name &&
@@ -429,47 +486,31 @@
                     });
                     return;
                 }
-                // 查询该选题题目是否是我唯一发布
-                let project = await tutorIsUniqueProjectName(name.trim());
-
-                const loginInformation = localStorage.getItem("loginInformation");
-                const { id } = JSON.parse(loginInformation);
-
-                if (project && project.tutorId !== id) {
-                    // 表示该课题题目别的导师已发布
-                    this.$message({
-                        message: "课题信息修改失败，题目已存在",
-                        type: "error",
-                        center: true,
-                    });
-                } else if (project && project.id !== this.rawRowData.id) {
-                    // 表示该课题题目自己已发布
-                    this.$message({
-                        message: "课题信息修改失败，题目已存在",
-                        type: "error",
-                        center: true,
-                    });
-                } else {
-                    // 否则发送请求去修改课题信息
-                    let data = await tutorChangeProjectInfo(this.description);
-                    if (data) {
-                        this.$message({
-                            message: "课题信息修改成功",
-                            type: "success",
-                            center: true,
-                        });
-                        // 原始行数据也要更新
-                        this.rawRowData = { ...this.description };
-                        // 调用方法, 更新我发布的课题的表格数据
-                        this.getMyHasPublished();
-                        // 触发全局事件总线中的自定义事件, 更新全系的课题表格数据
-                        this.$bus.$emit("projectHasChanged");
+                this.$refs[refName].validate(async (valid) => {
+                    if (valid) {
+                        let data = await tutorChangeProjectInfo(this.description);
+                        if (data) {
+                            this.$message({
+                                message: "课题信息修改成功",
+                                type: "success",
+                                center: true,
+                            });
+                            // 原始行数据也要更新
+                            this.rawRowData = { ...this.description };
+                            // 调用方法, 更新我发布的课题的表格数据
+                            this.getMyHasPublished();
+                            // 触发全局事件总线中的自定义事件, 更新全系的课题表格数据
+                            this.$bus.$emit("projectHasChanged");
+                        }
+                    } else {
+                        return false;
                     }
-                }
+                });
             },
 
             // 点击取消修改按钮
-            cancelChange() {
+            cancelChange(refName) {
+                this.$refs[refName].resetFields();
                 this.description = { ...this.rawRowData };
             },
 
