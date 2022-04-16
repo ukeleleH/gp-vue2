@@ -2,25 +2,54 @@
     <div class="my_project_wrap">
         <!-- 我的课题信息 -->
         <el-descriptions title="我的课题" :column="3" border>
-            <el-descriptions-item label="课题ID">
+            <el-descriptions-item
+                label="课题ID"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ myProject.id }}
             </el-descriptions-item>
-            <el-descriptions-item label="名称">
+            <el-descriptions-item
+                label="名称"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ myProject.name }}
             </el-descriptions-item>
-            <el-descriptions-item label="内容">
+            <el-descriptions-item
+                label="内容"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ myProject.content }}
             </el-descriptions-item>
-            <el-descriptions-item label="所属导师">
+            <el-descriptions-item
+                label="所属导师"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ myProject.tutorId }}
             </el-descriptions-item>
-            <el-descriptions-item label="性质">
+            <el-descriptions-item
+                label="性质"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ myProject.nature }}
             </el-descriptions-item>
-            <el-descriptions-item label="来源">
+            <el-descriptions-item
+                label="来源"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ myProject.source }}
             </el-descriptions-item>
-            <el-descriptions-item label="要求">
+            <el-descriptions-item
+                label="要求"
+                :span="3"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ myProject.demand }}
             </el-descriptions-item>
         </el-descriptions>
@@ -31,31 +60,60 @@
             border
             style="margin-top: 50px"
         >
-            <el-descriptions-item label="姓名">
+            <el-descriptions-item
+                label="姓名"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ tutorData.name }}
             </el-descriptions-item>
-            <el-descriptions-item label="性别">
+            <el-descriptions-item
+                label="性别"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ tutorData.gender }}
             </el-descriptions-item>
-            <el-descriptions-item label="职称">
+            <el-descriptions-item
+                label="职称"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ tutorData.title }}
             </el-descriptions-item>
-            <el-descriptions-item label="学位">
+            <el-descriptions-item
+                label="学位"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ tutorData.degree }}
             </el-descriptions-item>
-            <el-descriptions-item label="电话">
+            <el-descriptions-item
+                label="电话"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ tutorData.tel }}
             </el-descriptions-item>
-            <el-descriptions-item label="QQ">
+            <el-descriptions-item
+                label="QQ"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ tutorData.qq }}
             </el-descriptions-item>
             <el-descriptions-item
                 label="校内/校外"
-                v-if="tutorData.isInsideSchool"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
             >
                 {{ tutorData.isInsideSchool ? "本校导师" : "校外聘请" }}
             </el-descriptions-item>
-            <el-descriptions-item label="介绍">
+            <el-descriptions-item
+                label="介绍"
+                :labelStyle="descLabelStyle"
+                :contentStyle="descContentStyle"
+            >
                 {{ tutorData.introduction }}
             </el-descriptions-item>
         </el-descriptions>
@@ -73,6 +131,14 @@
                 myProject: {},
                 // 导师信息
                 tutorData: {},
+                // 描述列表标签样式
+                descLabelStyle: {
+                    width: "200px",
+                },
+                // 描述列表内容样式
+                descContentStyle: {
+                    width: "300px",
+                },
             };
         },
         methods: {
