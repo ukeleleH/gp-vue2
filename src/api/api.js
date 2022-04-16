@@ -54,6 +54,9 @@ export const getMyProject = (id) => { return $axios.get(`/student/myProject?id=$
 // 查询学生所选课题的导师信息
 export const getMyProjectTutor = (tutorId) => { return $axios.get(`/student/myProjectTutor?tutorId=${tutorId}`) }
 
+// 查询课题详情里的学生信息
+export const getStudentData = (studentId) => { return $axios.get(`/student/getStudentData?studentId=${studentId}`) }
+
 // 导师删除课题
 export const tutorDeleteProject = (id) => { return $axios.get(`/tutor/deleteProject?id=${id}`) }
 
