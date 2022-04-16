@@ -3,27 +3,27 @@ export default {
         columnWidthFilter(data) {
             switch (data) {
                 case "id":
-                    return "150px";
+                    return "160px";
                 case "name":
-                    return "150px";
+                    return "140px";
                 case "tel":
-                    return "200px";
+                    return "180px";
                 case "gender":
-                    return "150px";
+                    return "100px";
                 case "major":
-                    return "180px";
+                    return "250px";
                 case "class_grade":
-                    return "115px";
-                case "opportunity":
-                    return "105px";
-                case "qq":
-                    return "180px";
-                case "title":
-                    return "115px";
-                case "degree":
-                    return "105px";
-                case "introduction":
                     return "200px";
+                case "opportunity":
+                    return "100px";
+                case "qq":
+                    return "140px";
+                case "title":
+                    return "100px";
+                case "degree":
+                    return "100px";
+                case "introduction":
+                    return "180px";
             }
         }
     }

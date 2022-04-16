@@ -1,11 +1,11 @@
 <template>
     <div class="left_navigation_wrap">
         <el-row>
-            <el-col :span="4">
+            <el-col :span="3">
                 <el-menu
                     mode="vertical"
                     text-color="#a03f4d"
-                    style="width: 200px; user-select: none"
+                    class="whole_menu"
                     :default-active="activeIndex"
                     @select="handleSelect"
                 >
@@ -118,7 +118,18 @@
                     </el-submenu>
                 </el-menu>
             </el-col>
-            <el-col :span="18">
+            <el-col
+                :span="20"
+                v-if="
+                    $route.path === '/tutor_manage' ||
+                    $route.path === '/student_manage'
+                "
+            >
+                <keep-alive>
+                    <router-view> </router-view>
+                </keep-alive>
+            </el-col>
+            <el-col :span="19" :offset="1" v-else>
                 <keep-alive :exclude="['Profile']">
                     <router-view> </router-view>
                 </keep-alive>
@@ -201,6 +212,16 @@
                 },
                 immediate: true,
             },
+            "$route.name": {
+                handler: function (newVal) {
+                    if (newVal === "projectDetail") {
+                        this.activeIndex = "2-1";
+                        // 防止刷新后, 激活的索引丧失
+                        localStorage.setItem("activeIndex", "2-1");
+                    }
+                },
+                immediate: true,
+            },
             // 监听个人基本信息的改变
             loginInformation: {
                 handler: function () {
@@ -234,6 +255,13 @@
 
 <style lang="scss" scoped>
     .left_navigation_wrap {
+        .whole_menu {
+            width: 200px;
+            height: 650px;
+            user-select: none;
+            font-weight: bold;
+            margin-left: 5px;
+        }
         a {
             text-decoration: none;
         }
