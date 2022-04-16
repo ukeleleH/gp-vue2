@@ -39,6 +39,7 @@ const router = new VueRouter({
         { path: "/database_design", component: DatabaseDesign },
         { path: "/student_manage", component: StudentManage },
         { path: "/tutor_manage", component: TutorManage },
+        { path: "/all_project/*", component: NotFound },
     ]
 })
 

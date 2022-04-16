@@ -157,6 +157,7 @@
         adminAddStudent,
         adminChangeStudent,
     } from "@/api/api";
+    import { MessageBox } from "element-ui";
     export default {
         name: "StudentManage",
         components: { CommonTabel, CommonForm, CommonDesc },
@@ -392,6 +393,24 @@
         },
         mounted() {
             this.getAllStudent();
+        },
+        // 组件内路由守卫
+        beforeRouteEnter(to, from, next) {
+            let loginInformation = JSON.parse(
+                localStorage.getItem("loginInformation")
+            );
+            if (loginInformation) {
+                let { identity } = loginInformation;
+                if (identity !== 2) {
+                    MessageBox.alert("对不起，您暂无权限访问 ！", "提示", {
+                        type: "warning",
+                        confirmButtonText: "确定",
+                        center: true,
+                    });
+                } else {
+                    next();
+                }
+            }
         },
     };
 </script>

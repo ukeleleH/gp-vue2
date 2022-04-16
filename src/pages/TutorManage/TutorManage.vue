@@ -183,6 +183,7 @@
         adminAddTutor,
         adminChangeTutor,
     } from "@/api/api";
+    import { MessageBox } from "element-ui";
     export default {
         name: "TutorManage",
         components: { CommonTabel, CommonForm, CommonDesc },
@@ -463,6 +464,24 @@
         },
         async mounted() {
             this.getAllTutor();
+        },
+        // 组件内路由守卫
+        beforeRouteEnter(to, from, next) {
+            let loginInformation = JSON.parse(
+                localStorage.getItem("loginInformation")
+            );
+            if (loginInformation) {
+                let { identity } = loginInformation;
+                if (identity !== 2) {
+                    MessageBox.alert("对不起，您暂无权限访问 ！", "提示", {
+                        type: "warning",
+                        confirmButtonText: "确定",
+                        center: true,
+                    });
+                } else {
+                    next();
+                }
+            }
         },
     };
 </script>
