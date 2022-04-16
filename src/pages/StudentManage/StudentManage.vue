@@ -401,7 +401,7 @@
             );
             if (loginInformation) {
                 let { identity } = loginInformation;
-                if (identity !== 2) {
+                if (identity !== 3) {
                     MessageBox.alert("对不起，您暂无权限访问 ！", "提示", {
                         type: "warning",
                         confirmButtonText: "确定",
