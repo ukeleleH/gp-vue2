@@ -215,7 +215,7 @@
                     </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="校内/校外">
-                    <el-form-item prop="introduction">
+                    <el-form-item>
                         <el-input
                             :readonly="true"
                             @dblclick.native="showMessage"
@@ -235,7 +235,7 @@
                         'border-bottom': '1px solid transparent',
                     }"
                 >
-                    <el-form-item>
+                    <el-form-item prop="introduction">
                         <el-input
                             :readonly="isReadOnly"
                             type="textarea"
@@ -243,7 +243,6 @@
                             :rows="4"
                             :maxlength="255"
                             show-word-limit
-                            @dblclick.native="showMessage"
                             v-model="tutorForm.introduction"
                         ></el-input>
                     </el-form-item>
@@ -360,34 +359,41 @@
             };
             // 手机号校验规则
             let checkTel = (rule, value, callback) => {
-                let reg = /^(13\d|14[579]|15[^4\D]|17[^49\D]|18\d)\d{8}$/;
-                if (value === "") {
-                    callback(new Error("手机号不能为空"));
-                } else if (value.length !== 11) {
-                    callback(new Error("格式不正确，请输入11位手机号"));
-                } else if (!reg.test(value)) {
-                    callback(new Error("格式不正确，手机号以13/4/5/7/8开头"));
-                } else {
-                    callback();
+                // 在输入框不是只读的时候才进行校验规则的判断
+                if (!this.isReadOnly) {
+                    let reg = /^(13\d|14[579]|15[^4\D]|17[^49\D]|18\d)\d{8}$/;
+                    if (value === "") {
+                        callback(new Error("手机号不能为空"));
+                    } else if (value.length !== 11) {
+                        callback(new Error("格式不正确，请输入11位手机号"));
+                    } else if (!reg.test(value)) {
+                        callback(new Error("格式不正确，手机号以13/4/5/7/8开头"));
+                    } else {
+                        callback();
+                    }
                 }
             };
             // QQ号的校验规则
             let checkQQ = (rule, value, callback) => {
-                let reg = /^\d{6,12}$/;
-                if (!reg.test(value)) {
-                    callback(new Error("QQ号只能是数字,且为6-12位"));
-                } else {
-                    callback();
+                if (!this.isReadOnly) {
+                    let reg = /^\d{6,12}$/;
+                    if (!reg.test(value)) {
+                        callback(new Error("QQ号只能是数字,且为6-12位"));
+                    } else {
+                        callback();
+                    }
                 }
             };
             // 导师介绍的校验规则
             let checkIntro = (rule, value, callback) => {
-                if (value.trim() === "") {
-                    callback(new Error("个人介绍不能为空"));
-                } else if (value.length < 10) {
-                    callback(new Error("请至少输入10个字"));
-                } else {
-                    callback();
+                if (!this.isReadOnly) {
+                    if (value.trim() === "") {
+                        callback(new Error("个人介绍不能为空"));
+                    } else if (value.length < 10) {
+                        callback(new Error("请至少输入10个字"));
+                    } else {
+                        callback();
+                    }
                 }
             };
             return {
