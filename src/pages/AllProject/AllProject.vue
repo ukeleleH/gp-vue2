@@ -270,7 +270,7 @@
                 if (this.loginInformation.major) {
                     // 遍历所有的课题列表，如果有课题列表的 studentId 等于我的 id，则表示我已经选择了课题
                     this.isMeHaveChoosen = this.allProjectList.some((item) => {
-                        return item.studentId == this.loginInformation.id;
+                        return item.studentId == this.loginInformation.sno;
                     });
                 }
             },
@@ -294,7 +294,7 @@
             // 点击选择按钮
             chooseProject(row) {
                 const { id } = row; // 课题ID
-                const { id: studentId } = this.loginInformation; // 学生ID
+                const { sno: studentId } = this.loginInformation; // 学生ID
                 this.$confirm("确定选择该课题吗？", "课题选择", {
                     type: "success",
                 })

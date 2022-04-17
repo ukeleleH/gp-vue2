@@ -66,21 +66,21 @@
         methods: {
             goProfile() {
                 const { identity } = this.loginInformation;
-                const { id, name } = this.loginInformation;
+                const { name } = this.loginInformation;
                 if (identity === 1) {
                     // 学生身份
-                    const { major, class_grade, gender, tel } =
+                    const { sno, major, class_grade, gender, tel } =
                         this.loginInformation;
                     this.$router.push(
-                        `/profile?id=${id}&name=${name}&major=${major}&class_grade=${class_grade}&gender=${gender}&tel=${tel}`
+                        `/profile?sno=${sno}&name=${name}&major=${major}&class_grade=${class_grade}&gender=${gender}&tel=${tel}`
                     );
                 } else if (identity === 2) {
                     // 导师身份
-                    const { title, degree, gender, tel, qq } =
+                    const { tno, title, degree, gender, tel, qq } =
                         this.loginInformation;
                     const { introduction, isInsideSchool } = this.loginInformation;
                     this.$router.push(
-                        `/profile?id=${id}&name=${name}&title=${title}&degree=${degree}&gender=${gender}&tel=${tel}&qq=${qq}&introduction=${introduction}&isInsideSchool=${isInsideSchool}`
+                        `/profile?tno=${tno}&name=${name}&title=${title}&degree=${degree}&gender=${gender}&tel=${tel}&qq=${qq}&introduction=${introduction}&isInsideSchool=${isInsideSchool}`
                     );
                 }
             },

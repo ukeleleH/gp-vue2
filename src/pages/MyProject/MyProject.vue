@@ -107,7 +107,9 @@
                 :labelStyle="descLabelStyle"
                 :contentStyle="descContentStyle"
             >
-                {{ tutorData.isInsideSchool ? "本校导师" : "校外聘请" }}
+                <span v-if="tutorData.isInsideSchool != null">
+                    {{ tutorData.isInsideSchool ? "本校导师" : "校外聘请" }}
+                </span>
             </el-descriptions-item>
             <el-descriptions-item
                 label="介绍"
@@ -144,9 +146,9 @@
         methods: {
             async getMyProject() {
                 const loginInformation = localStorage.getItem("loginInformation");
-                const { id } = JSON.parse(loginInformation);
+                const { sno } = JSON.parse(loginInformation);
                 // 发送请求, 获取我的课题信息
-                let myProjectData = await getMyProject(id);
+                let myProjectData = await getMyProject(sno);
                 // 如果存在课题信息
                 if (myProjectData) {
                     this.myProject = myProjectData;

@@ -12,7 +12,7 @@
                     <el-form-item>
                         <el-input
                             :readonly="true"
-                            v-model="studentForm.id"
+                            v-model="studentForm.sno"
                             @dblclick.native="showMessage"
                         ></el-input>
                     </el-form-item>
@@ -141,7 +141,7 @@
                     <el-form-item>
                         <el-input
                             :readonly="true"
-                            v-model="tutorForm.id"
+                            v-model="tutorForm.tno"
                             @dblclick.native="showMessage"
                         ></el-input>
                     </el-form-item>
@@ -472,6 +472,7 @@
                                 });
                                 return;
                             }
+                            console.log(this.studentForm);
                             // 信息有修改，发送请求
                             let data = await studentChangeProfile(this.studentForm);
                             this.judgeChangeProfile(data);
@@ -574,15 +575,15 @@
                     if (valid) {
                         if (this.studentForm.major) {
                             // 如果有 major 信息, 就是学生身份
-                            const { id } = this.studentForm;
+                            const { sno } = this.studentForm;
                             const { password } = this.pwdForm;
-                            let data = await studentChangePassword(id, password);
+                            let data = await studentChangePassword(sno, password);
                             this.judgeChangePassword(data);
                         } else if (this.tutorForm.title) {
                             // 如果有 title 信息就是导师身份
-                            const { id } = this.tutorForm;
+                            const { tno } = this.tutorForm;
                             const { password } = this.pwdForm;
-                            let data = await tutorChangePassword(id, password);
+                            let data = await tutorChangePassword(tno, password);
                             this.judgeChangePassword(data);
                         }
                     } else {
@@ -643,17 +644,17 @@
                     }
                 )
                     .then(async () => {
-                        const { id } = this.studentForm;
+                        const { sno } = this.studentForm;
                         // 查询可重选的次数
-                        let num = await getStudentOpportunity(id);
+                        let num = await getStudentOpportunity(sno);
                         if (num) {
                             // 更新已选择的课题信息
-                            const data = await studentUpdateHasChooseProject(id);
+                            const data = await studentUpdateHasChooseProject(sno);
                             // 更新可重选的次数
                             const dataTwo =
-                                data && (await updateStudentOpportunity(id));
+                                data && (await updateStudentOpportunity(sno));
                             if (dataTwo) {
-                                this.personInfo.sProject = "";
+                                this.studentForm.sProject = "";
                                 this.$message({
                                     type: "success",
                                     center: true,
@@ -667,7 +668,7 @@
                             this.$message({
                                 type: "error",
                                 center: true,
-                                message: "重选失败，您已没有重选机会!",
+                                message: "您的重选次数已用完!",
                             });
                         }
                     })
@@ -689,7 +690,7 @@
             if (query.major) {
                 this.refName = "studentForm";
                 // 查询学生选择的毕业设计题目
-                let data = await getStudentProject(query.id);
+                let data = await getStudentProject(query.sno);
                 this.studentForm = { ...query, sProject: data };
                 // 原始数据
                 this.rawFormData = { ...this.studentForm };
@@ -708,11 +709,11 @@
                     next(false);
                 } else if (identity === 2) {
                     // 如果为导师身份
-                    let { id, name, qq, title, gender } = to.query;
+                    let { tno, name, qq, title, gender } = to.query;
                     let { degree, tel, isInsideSchool, introduction } = to.query;
                     // 如果任何一个参数为空，则不进行跳转
                     if (
-                        !id ||
+                        !tno ||
                         !name ||
                         !qq ||
                         !title ||
@@ -726,7 +727,7 @@
                     } else if (
                         // 如果任何一个参数和登录信息里的不相等，则不进行跳转
                         // 这里不使用全等判断类型， 因为 query 对象里的 value 都是字符串类型
-                        id != loginInformation.id ||
+                        tno != loginInformation.tno ||
                         name != loginInformation.name ||
                         qq != loginInformation.qq ||
                         title != loginInformation.title ||
@@ -742,14 +743,21 @@
                     }
                 } else if (identity === 1) {
                     // 如果为学生身份
-                    let { id, name, major, class_grade, gender, tel } = to.query;
+                    let { sno, name, major, class_grade, gender, tel } = to.query;
                     // 如果任何一个参数为空，则不进行跳转
-                    if (!id || !name || !major || !class_grade || !gender || !tel) {
+                    if (
+                        !sno ||
+                        !name ||
+                        !major ||
+                        !class_grade ||
+                        !gender ||
+                        !tel
+                    ) {
                         next(false);
                     } else if (
                         // 如果任何一个参数和登录信息里的不相等，则不进行跳转
                         // 这里不使用全等判断类型， 因为 query 对象里的 value 都是字符串类型
-                        id != loginInformation.id ||
+                        sno != loginInformation.sno ||
                         name != loginInformation.name ||
                         gender != loginInformation.gender ||
                         tel != loginInformation.tel ||

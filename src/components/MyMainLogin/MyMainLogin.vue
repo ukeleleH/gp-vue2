@@ -11,7 +11,7 @@
             >
                 <el-form-item label="账号：" style="font-weight: 800" prop="id">
                     <el-input
-                        v-model="form.id"
+                        v-model="form.account"
                         placeholder="学号 / 工号 / 邮箱地址"
                         autocomplete="on"
                     />
@@ -59,14 +59,14 @@
         data() {
             return {
                 form: {
-                    id: "",
+                    account: "",
                     password: "",
                 },
                 // 单选框选择的身份
                 identity: "",
                 // 验证规则
                 rules: {
-                    id: [
+                    account: [
                         {
                             required: true,
                             message: "用户名不能为空",

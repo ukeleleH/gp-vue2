@@ -1,12 +1,15 @@
 export default {
     filters: {
-        labelFilter(data, labelObj) {
+        labelFilter(data) {
             switch (data) {
-                case "id": {
-                    if (labelObj.major !== undefined) return "学号";
-                    else if (labelObj.title !== undefined) return "工号";
-                    else return "ID";
-                }
+                case "id":
+                    return "ID";
+                case "sno":
+                    return "学号";
+                case "tno":
+                    return "工号";
+                case "ano":
+                    return "工号";
                 case "name":
                     return "姓名";
                 case "password":

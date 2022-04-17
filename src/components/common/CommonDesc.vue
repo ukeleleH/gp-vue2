@@ -14,9 +14,7 @@
                 <slot :name="item" :descObj="descObj">
                     <el-input
                         v-model="descObj[item]"
-                        :disabled="
-                            item === 'id' || item === 'password' ? true : false
-                        "
+                        :disabled="item === 'password' ? true : false"
                     ></el-input>
                 </slot>
             </el-descriptions-item>

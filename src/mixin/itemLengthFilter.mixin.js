@@ -2,9 +2,12 @@ export default {
     filters: {
         itemLengthFilter(data) {
             switch (data) {
-                case "id": {
+                case "sno":
                     return 10;
-                }
+                case "tno":
+                    return 10;
+                case "ano":
+                    return 10;
                 case "name":
                     return 32;
                 case "password":

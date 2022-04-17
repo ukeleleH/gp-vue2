@@ -73,7 +73,7 @@
         <!-- 通用描述列表 -->
         <common-desc
             v-show="isDescShow"
-            :labels="tutorTableDescHeaders"
+            :labels="tutorFormLabels"
             :descObj="currentRowObj"
             :pullUp="pullUp"
             :confirmChange="confirmChange"
@@ -197,7 +197,6 @@
                 } else {
                     // 查询是否存在
                     adminIsUniqueTutorId(value.trim()).then((data) => {
-                        console.log(data);
                         if (data) {
                             callback(new Error("工号已存在"));
                         } else {
@@ -259,7 +258,7 @@
                 allTutorList: [],
 
                 tutorFormLabels: [
-                    "id",
+                    "tno",
                     "password",
                     "name",
                     "tel",
@@ -271,7 +270,7 @@
                     "introduction",
                 ],
                 tutorForm: {
-                    id: "",
+                    tno: "",
                     password: "",
                     name: "",
                     tel: "",
@@ -283,7 +282,7 @@
                     introduction: "",
                 },
                 tutorFormRules: {
-                    id: [{ validator: checkTutorId, trigger: "blur" }],
+                    tno: [{ validator: checkTutorId, trigger: "blur" }],
                     password: [{ validator: validatePass, trigger: "blur" }],
                     tel: [{ validator: checkTel, trigger: "blur" }],
                     qq: [{ validator: checkQQ, trigger: "blur" }],
@@ -346,7 +345,7 @@
             // 确认修改导师信息
             async confirmChange() {
                 const {
-                    id,
+                    tno,
                     password,
                     name,
                     tel,
@@ -358,7 +357,7 @@
                     intruduction,
                 } = this.currentRowObj;
                 if (
-                    id === this.rowCurrentRowObj.id &&
+                    tno === this.rowCurrentRowObj.tno &&
                     password === this.rowCurrentRowObj.password &&
                     name === this.rowCurrentRowObj.name &&
                     tel === this.rowCurrentRowObj.tel &&

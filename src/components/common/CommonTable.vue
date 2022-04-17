@@ -11,7 +11,7 @@
                 :key="item"
                 :prop="item"
                 :width="item | columnWidthFilter"
-                :label="item | labelFilter(dataList[0])"
+                :label="item | labelFilter"
             >
             </el-table-column>
         </slot>

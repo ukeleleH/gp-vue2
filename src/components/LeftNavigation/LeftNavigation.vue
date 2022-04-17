@@ -152,10 +152,10 @@
             query() {
                 if (this.loginInformation.major) {
                     // 学生身份
-                    const { id, name, major, class_grade, gender, tel } =
+                    const { sno, name, major, class_grade, gender, tel } =
                         this.loginInformation;
                     return {
-                        id,
+                        sno,
                         name,
                         major,
                         class_grade,
@@ -165,7 +165,7 @@
                 } else if (this.loginInformation.title) {
                     // 导师身份
                     const {
-                        id,
+                        tno,
                         name,
                         qq,
                         title,
@@ -176,7 +176,7 @@
                         introduction,
                     } = this.loginInformation;
                     return {
-                        id,
+                        tno,
                         name,
                         qq,
                         title,

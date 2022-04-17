@@ -209,7 +209,6 @@
             async getStudentData() {
                 // 发送请求, 获取学生信息
                 let data = await getStudentData(this.projectData.studentId);
-                console.log(data);
                 this.studentData = { ...data, password: "" };
             },
         },

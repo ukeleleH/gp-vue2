@@ -355,13 +355,13 @@
                     // 查询是否存在
                     let data = await tutorIsUniqueProjectName(value);
                     if (data) {
-                        let { id } = JSON.parse(
+                        let { tno } = JSON.parse(
                             localStorage.getItem("loginInformation")
                         );
                         let { id: projectId } = this.description;
                         // 如果该课题是我自己的,且该课题 id 与我正在修改的课题的 id 一样
                         // 防止一个导师有两个相同名称的课题
-                        if (data.tutorId === id && data.id === projectId) {
+                        if (data.tutorId === tno && data.id === projectId) {
                             callback();
                         } else {
                             // 否则是别的导师的
@@ -527,7 +527,7 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         // 如果校验通过，则发送请求
-                        const { id: tutorId } = JSON.parse(
+                        const { tno: tutorId } = JSON.parse(
                             localStorage.getItem("loginInformation")
                         );
                         tutorPublishNewProject({
@@ -564,9 +564,9 @@
             getMyHasPublished() {
                 // 获取登录信息中我的id
                 const loginInformation = localStorage.getItem("loginInformation");
-                const { id } = JSON.parse(loginInformation);
+                const { tno } = JSON.parse(loginInformation);
                 // 发送请求
-                tutorGetMyPublishProject(id).then((data) => {
+                tutorGetMyPublishProject(tno).then((data) => {
                     this.publishProjectList = [...data];
                 });
             },

@@ -215,7 +215,7 @@
                 rowCurrentRowObj: {},
 
                 studentFormLabels: [
-                    "id",
+                    "sno",
                     "password",
                     "name",
                     "tel",
@@ -224,7 +224,7 @@
                     "class_grade",
                 ],
                 studentForm: {
-                    id: "",
+                    sno: "",
                     password: "",
                     name: "",
                     tel: "",
@@ -233,7 +233,7 @@
                     class_grade: "",
                 },
                 studentFormRules: {
-                    id: [{ validator: checkStudentId, trigger: "blur" }],
+                    sno: [{ validator: checkStudentId, trigger: "blur" }],
                     password: [{ validator: validatePass, trigger: "blur" }],
                     tel: [{ validator: checkTel, trigger: "blur" }],
                     name: [
@@ -321,6 +321,7 @@
             confirmAdd(refName, refs) {
                 refs[refName].validate(async (valid) => {
                     if (valid) {
+                        console.log(this.studentForm);
                         // 如果校验通过，则发送请求
                         let data = await adminAddStudent(this.studentForm);
                         if (data) {
@@ -340,10 +341,10 @@
             },
             // 确认修改学生信息
             async confirmChange() {
-                const { id, password, name, tel, gender, major, class_grade } =
+                const { sno, password, name, tel, gender, major, class_grade } =
                     this.currentRowObj;
                 if (
-                    id === this.rowCurrentRowObj.id &&
+                    sno === this.rowCurrentRowObj.sno &&
                     password === this.rowCurrentRowObj.password &&
                     name === this.rowCurrentRowObj.name &&
                     tel === this.rowCurrentRowObj.tel &&
