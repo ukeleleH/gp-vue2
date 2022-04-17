@@ -66,6 +66,7 @@
                 slot-scope="{ descObj }"
                 v-model="descObj['gender']"
                 placeholder="请选择"
+                style="width: 100%"
             >
                 <el-option label="男" value="男"> </el-option>
                 <el-option label="女" value="女"> </el-option>
@@ -75,6 +76,7 @@
                 slot-scope="{ descObj }"
                 v-model="descObj['major']"
                 placeholder="请选择"
+                style="width: 100%"
             >
                 <el-option label="软件工程" value="软件工程"> </el-option>
                 <el-option label="法学" value="法学"> </el-option>
@@ -88,6 +90,7 @@
                 slot-scope="{ descObj }"
                 v-model="descObj['class_grade']"
                 placeholder="请选择"
+                style="width: 27%"
             >
                 <el-option label="182班" value="182班"> </el-option>
                 <el-option label="181班" value="181班"> </el-option>
@@ -107,13 +110,21 @@
             :cancelAdd="cancelAdd"
         >
             <el-form-item slot="gender" slot-scope="{ addForm }" prop="gender">
-                <el-select v-model="addForm['gender']" placeholder="请选择">
+                <el-select
+                    v-model="addForm['gender']"
+                    placeholder="请选择"
+                    style="width: 100%"
+                >
                     <el-option label="男" value="男"> </el-option>
                     <el-option label="女" value="女"> </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item slot="major" slot-scope="{ addForm }" prop="major">
-                <el-select v-model="addForm['major']" placeholder="请选择">
+                <el-select
+                    v-model="addForm['major']"
+                    placeholder="请选择"
+                    style="width: 100%"
+                >
                     <el-option label="软件工程" value="软件工程"> </el-option>
                     <el-option label="法学" value="法学"> </el-option>
                     <el-option label="会计学" value="会计学"> </el-option>
@@ -133,6 +144,7 @@
                 <el-select
                     v-model="addForm['class_grade']"
                     placeholder="请选择"
+                    style="width: 27%"
                 >
                     <el-option label="182班" value="182班"> </el-option>
                     <el-option label="181班" value="181班"> </el-option>

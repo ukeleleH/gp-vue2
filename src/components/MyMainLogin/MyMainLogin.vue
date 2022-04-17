@@ -9,7 +9,11 @@
                 :rules="rules"
                 status-icon
             >
-                <el-form-item label="账号：" style="font-weight: 800" prop="id">
+                <el-form-item
+                    label="账号："
+                    style="font-weight: 800"
+                    prop="account"
+                >
                     <el-input
                         v-model="form.account"
                         placeholder="学号 / 工号 / 邮箱地址"

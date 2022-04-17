@@ -84,6 +84,7 @@
                 slot-scope="{ descObj }"
                 v-model="descObj['gender']"
                 placeholder="请选择"
+                style="width: 100%"
             >
                 <el-option label="男" value="男"> </el-option>
                 <el-option label="女" value="女"> </el-option>
@@ -93,6 +94,7 @@
                 slot-scope="{ descObj }"
                 v-model="descObj['title']"
                 placeholder="请选择"
+                style="width: 100%"
             >
                 <el-option label="助教" value="助教"> </el-option>
                 <el-option label="讲师" value="讲师"> </el-option>
@@ -104,6 +106,7 @@
                 slot-scope="{ descObj }"
                 v-model="descObj['degree']"
                 placeholder="请选择"
+                style="width: 100%"
             >
                 <el-option label="本科" value="本科"> </el-option>
                 <el-option label="硕士" value="硕士"> </el-option>
@@ -115,6 +118,7 @@
                 slot-scope="{ descObj }"
                 v-model="descObj['isInsideSchool']"
                 placeholder="请选择"
+                style="width: 100%"
             >
                 <el-option label="校外聘请" :value="0"> 校外聘请 </el-option>
                 <el-option label="校内导师" :value="1"> 校内导师 </el-option>
@@ -130,15 +134,24 @@
             :pullUp="pullUp"
             :confirmAdd="confirmAdd"
             :cancelAdd="cancelAdd"
+            style="margin-bottom: 50px"
         >
             <el-form-item slot="gender" slot-scope="{ addForm }" prop="gender">
-                <el-select v-model="addForm['gender']" placeholder="请选择">
+                <el-select
+                    v-model="addForm['gender']"
+                    placeholder="请选择"
+                    style="width: 100%"
+                >
                     <el-option label="男" value="男"> </el-option>
                     <el-option label="女" value="女"> </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item slot="title" slot-scope="{ addForm }" prop="title">
-                <el-select v-model="addForm['title']" placeholder="请选择">
+                <el-select
+                    v-model="addForm['title']"
+                    placeholder="请选择"
+                    style="width: 100%"
+                >
                     <el-option label="助教" value="助教"> </el-option>
                     <el-option label="讲师" value="讲师"> </el-option>
                     <el-option label="副教授" value="副教授"> </el-option>
@@ -146,7 +159,11 @@
                 </el-select>
             </el-form-item>
             <el-form-item slot="degree" slot-scope="{ addForm }" prop="degree">
-                <el-select v-model="addForm['degree']" placeholder="请选择">
+                <el-select
+                    v-model="addForm['degree']"
+                    placeholder="请选择"
+                    style="width: 100%"
+                >
                     <el-option label="本科" value="本科"> </el-option>
                     <el-option label="硕士" value="硕士"> </el-option>
                     <el-option label="博士" value="博士"> </el-option>
@@ -157,6 +174,7 @@
                 <el-select
                     v-model="addForm['isInsideSchool']"
                     placeholder="请选择"
+                    style="width: 100%"
                 >
                     <el-option label="校外聘请" :value="0">
                         校外聘请
