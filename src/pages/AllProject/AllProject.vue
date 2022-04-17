@@ -195,7 +195,7 @@
                 </el-descriptions>
             </el-dialog>
         </div>
-        <div v-else>
+        <div v-if="$route.name == 'projectDetail'">
             <!-- 显示子路由：课题详情 -->
             <router-view></router-view>
         </div>
