@@ -27,6 +27,15 @@ export const updateStudentOpportunity = (sno) => { return $axios.get(`/student/u
 // 更新学生已选课题的信息
 export const studentUpdateHasChooseProject = (studentId) => { return $axios.get(`/student/updateHasChooseProject?studentId=${studentId}`) }
 
+// 查询学科部信息
+export const systemSearchDepartment = () => { return $axios.get("/system/searchDepartment") }
+
+// 查询专业信息
+export const systemSearchMajor = () => { return $axios.get("/system/searchMajor") }
+
+// 查询班级信息
+export const systemSearchClass = (type) => { return $axios.get(`/system/searchClass?limitNum=${type}`) }
+
 // 学生修改个人信息
 export const studentChangeProfile = (data) => { return $axios.post("/student/changeProfile", data) }
 

@@ -59,11 +59,14 @@
                 </el-descriptions-item>
                 <el-descriptions-item label="专业">
                     <el-form-item prop="major">
-                        <el-select
+                        <el-cascader
                             style="width: 100%"
-                            v-model="studentForm.major"
-                        >
-                        </el-select>
+                            :options="majorOptions"
+                            :show-all-levels="false"
+                            :props="{ expandTrigger: 'hover' }"
+                            v-model="majorCascaderVal"
+                            @change="majorChangeHandler"
+                        ></el-cascader>
                     </el-form-item>
                 </el-descriptions-item>
                 <el-descriptions-item label="班级">
@@ -72,6 +75,13 @@
                             style="width: 100%"
                             v-model="studentForm.class_grade"
                         >
+                            <el-option
+                                v-for="item in classArr"
+                                :key="item.id"
+                                :disabled="isReadOnly"
+                                :value="item.name"
+                                :label="item.name"
+                            ></el-option>
                         </el-select>
                     </el-form-item>
                 </el-descriptions-item>
@@ -330,8 +340,10 @@
         studentChangePassword,
         tutorChangePassword,
     } from "@/api/api";
+    import searchMajorMixin from "@/mixin/searchMajor.mixin";
     export default {
         name: "Profile",
+        mixins: [searchMajorMixin],
         data() {
             // 密码校验规则
             let validatePass = (rule, value, callback) => {
@@ -401,6 +413,10 @@
                 studentForm: {},
                 tutorForm: {},
                 rawFormData: {},
+                majorCascaderVal: [], // 级联框选中的值
+                rawMajorCascaderVal: [], // 原始级联框选中的值
+                majorOptions: [], // 级联选择框的数据
+                classArr: [], // 班级下拉框数据
                 refName: "",
 
                 studentFormRules: {
@@ -440,6 +456,24 @@
                 },
             };
         },
+        watch: {
+            isReadOnly(newVal, oldVal) {
+                if (newVal == true) {
+                    this.majorOptions.forEach((item) => {
+                        item.children.forEach((innerItem) => {
+                            innerItem.disabled = true;
+                        });
+                    });
+                }
+                if (newVal == false) {
+                    this.majorOptions.forEach((item) => {
+                        item.children.forEach((innerItem) => {
+                            innerItem.disabled = false;
+                        });
+                    });
+                }
+            },
+        },
         methods: {
             // 点击修改基本资料
             changeProfile() {
@@ -456,13 +490,14 @@
                         // 校验通过
                         // 如果是学生
                         if (this.studentForm.major) {
-                            const { name, gender, tel, class_grade } =
+                            const { name, gender, tel, major, class_grade } =
                                 this.rawFormData;
                             // 如果信息未做修改，直接返回，不发送请求
                             if (
                                 name === this.studentForm.name &&
                                 gender === this.studentForm.gender &&
                                 tel === this.studentForm.tel &&
+                                major === this.studentForm.major &&
                                 class_grade === this.studentForm.class_grade
                             ) {
                                 this.$message({
@@ -472,7 +507,6 @@
                                 });
                                 return;
                             }
-                            console.log(this.studentForm);
                             // 信息有修改，发送请求
                             let data = await studentChangeProfile(this.studentForm);
                             this.judgeChangeProfile(data);
@@ -521,6 +555,8 @@
                     this.rawFormData = this.studentForm.major
                         ? { ...this.studentForm }
                         : { ...this.tutorForm };
+                    // 更新 rawMajorCascaderVal
+                    this.rawMajorCascaderVal = this.majorCascaderVal;
                     // 修改本地存储的登录信息
                     let loginInfo = JSON.parse(
                         localStorage.getItem("loginInformation")
@@ -546,6 +582,7 @@
                 this.$refs[formRefName].resetFields();
                 if (formRefName === "studentForm") {
                     this.studentForm = { ...this.rawFormData };
+                    this.majorCascaderVal = this.rawMajorCascaderVal;
                 }
                 if (formRefName === "tutorForm") {
                     this.tutorForm = { ...this.rawFormData };
@@ -692,8 +729,10 @@
                 // 查询学生选择的毕业设计题目
                 let data = await getStudentProject(query.sno);
                 this.studentForm = { ...query, sProject: data };
-                // 原始数据
+                // 存入原始数据
                 this.rawFormData = { ...this.studentForm };
+                // 调用 mixin 里的方法，查询学科部与专业
+                this.getDepartment();
             }
         },
 
