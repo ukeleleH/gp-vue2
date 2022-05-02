@@ -104,7 +104,7 @@
                             <el-button
                                 type="warning"
                                 v-if="studentForm.sProject"
-                                @click="HandleReselection"
+                                @click="handleReselection"
                                 style="margin-left: 15px"
                             >
                                 重选
@@ -670,7 +670,7 @@
             },
 
             // 重选课题
-            HandleReselection() {
+            handleReselection() {
                 this.$confirm(
                     "每个人只有一次重选机会，且重选后可能不能再选择到现在的选题，确定要重选吗?",
                     "提示",

@@ -53,6 +53,8 @@ export default {
                         if (innerItem.value == val[1]) {
                             // 将值保存到 studentForm 中
                             this.studentForm.major = innerItem.label
+                            // 先清空 class_grade 
+                            this.studentForm.class_grade = ""
                             // 发生请求，获取班级数据
                             let data = await systemSearchClass(innerItem.type)
                             this.classArr = data
