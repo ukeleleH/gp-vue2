@@ -71,20 +71,17 @@
                 <el-option label="男" value="男"> </el-option>
                 <el-option label="女" value="女"> </el-option>
             </el-select>
-            <el-select
+            <el-cascader
                 slot="major"
-                slot-scope="{ descObj }"
-                v-model="descObj['major']"
-                placeholder="请选择"
+                slot-scope="{}"
+                v-model="majorCascaderVal"
                 style="width: 100%"
+                :options="majorOptions"
+                :show-all-levels="false"
+                :props="{ expandTrigger: 'hover' }"
+                @change="majorChangeHandler"
             >
-                <el-option label="软件工程" value="软件工程"> </el-option>
-                <el-option label="法学" value="法学"> </el-option>
-                <el-option label="会计学" value="会计学"> </el-option>
-                <el-option label="计算机科学与技术" value="计算机科学与技术">
-                </el-option>
-                <el-option label="英语" value="英语"> </el-option>
-            </el-select>
+            </el-cascader>
             <el-select
                 slot="class_grade"
                 slot-scope="{ descObj }"
@@ -92,10 +89,13 @@
                 placeholder="请选择"
                 style="width: 27%"
             >
-                <el-option label="182班" value="182班"> </el-option>
-                <el-option label="181班" value="181班"> </el-option>
-                <el-option label="183班" value="183班"> </el-option>
-                <el-option label="184班" value="184班"> </el-option>
+                <el-option
+                    v-for="item in classArr"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.name"
+                >
+                </el-option>
             </el-select>
         </common-desc>
         <!-- 通用表单 -->
@@ -119,22 +119,16 @@
                     <el-option label="女" value="女"> </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item slot="major" slot-scope="{ addForm }" prop="major">
-                <el-select
-                    v-model="addForm['major']"
-                    placeholder="请选择"
+            <el-form-item slot="major" slot-scope="{}" prop="major">
+                <el-cascader
+                    v-model="majorCascaderVal"
                     style="width: 100%"
+                    :options="majorOptions"
+                    :show-all-levels="false"
+                    :props="{ expandTrigger: 'hover' }"
+                    @change="majorChangeHandler"
                 >
-                    <el-option label="软件工程" value="软件工程"> </el-option>
-                    <el-option label="法学" value="法学"> </el-option>
-                    <el-option label="会计学" value="会计学"> </el-option>
-                    <el-option
-                        label="计算机科学与技术"
-                        value="计算机科学与技术"
-                    >
-                    </el-option>
-                    <el-option label="英语" value="英语"> </el-option>
-                </el-select>
+                </el-cascader>
             </el-form-item>
             <el-form-item
                 slot="class_grade"
@@ -146,10 +140,13 @@
                     placeholder="请选择"
                     style="width: 27%"
                 >
-                    <el-option label="182班" value="182班"> </el-option>
-                    <el-option label="181班" value="181班"> </el-option>
-                    <el-option label="183班" value="183班"> </el-option>
-                    <el-option label="184班" value="184班"> </el-option>
+                    <el-option
+                        v-for="item in classArr"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.name"
+                    >
+                    </el-option>
                 </el-select>
             </el-form-item>
         </common-form>
@@ -161,6 +158,8 @@
     import CommonTabel from "@/components/common/CommonTable.vue";
     import CommonDesc from "@/components/common/CommonDesc.vue";
     import CommonForm from "@/components/common/CommonForm.vue";
+    // 引入 mixin
+    import searchMajorMixin from "@/mixin/searchMajor.mixin";
     // 引入 api
     import {
         adminSelectAllStudent,
@@ -172,6 +171,7 @@
     import { MessageBox } from "element-ui";
     export default {
         name: "StudentManage",
+        mixins: [searchMajorMixin],
         components: { CommonTabel, CommonForm, CommonDesc },
         data() {
             let checkStudentId = (_, value, callback) => {
@@ -224,7 +224,12 @@
                 allStudentList: [],
 
                 currentRowObj: {},
-                rowCurrentRowObj: {},
+                rawCurrentRowObj: {},
+
+                majorOptions: [], // 专业的级联数据
+                majorCascaderVal: [], // 专业级联框的值
+                rawMajorCascaderVal: [], // 初始专业级联框的值
+                classArr: [], // 班级下拉框数据
 
                 studentFormLabels: [
                     "sno",
@@ -265,6 +270,7 @@
                         {
                             required: true,
                             message: "请选择学生专业",
+                            trigger: "blur",
                         },
                     ],
                     class_grade: [
@@ -294,6 +300,12 @@
                 this.studentTableHeight = 330;
                 this.isFormShow = true;
                 this.isDescShow = false;
+                this.majorCascaderVal = []; // 清空 majorCascaderVal
+                this.classArr = []; // 清空 classArr
+                // 如果专业数组为空，则发送请求
+                if (this.majorOptions.length === 0) {
+                    this.getDepartment();
+                }
             },
             // 修改学生信息
             changeStudent(row) {
@@ -301,7 +313,9 @@
                 this.isFormShow = false;
                 this.isDescShow = true;
                 this.currentRowObj = { ...row };
-                this.rowCurrentRowObj = { ...row };
+                this.rawCurrentRowObj = { ...row };
+                // 触发 mixin 中的方法，获取专业数据
+                this.getDepartment();
             },
             // 删除学生
             deleteStudent(row) {
@@ -350,19 +364,20 @@
             // 重置表单，取消添加
             cancelAdd(refName, refs) {
                 refs[refName].resetFields();
+                this.majorCascaderVal = [];
             },
             // 确认修改学生信息
             async confirmChange() {
                 const { sno, password, name, tel, gender, major, class_grade } =
                     this.currentRowObj;
                 if (
-                    sno === this.rowCurrentRowObj.sno &&
-                    password === this.rowCurrentRowObj.password &&
-                    name === this.rowCurrentRowObj.name &&
-                    tel === this.rowCurrentRowObj.tel &&
-                    gender === this.rowCurrentRowObj.gender &&
-                    major === this.rowCurrentRowObj.major &&
-                    class_grade === this.rowCurrentRowObj.class_grade
+                    sno === this.rawCurrentRowObj.sno &&
+                    password === this.rawCurrentRowObj.password &&
+                    name === this.rawCurrentRowObj.name &&
+                    tel === this.rawCurrentRowObj.tel &&
+                    gender === this.rawCurrentRowObj.gender &&
+                    major === this.rawCurrentRowObj.major &&
+                    class_grade === this.rawCurrentRowObj.class_grade
                 ) {
                     this.$message({
                         message: "学生信息未作修改",
@@ -381,7 +396,8 @@
                             center: true,
                         });
                         // 更新原数据
-                        this.rowCurrentRowObj = { ...this.currentRowObj };
+                        this.rawCurrentRowObj = { ...this.currentRowObj };
+                        this.rawMajorCascaderVal = this.majorCascaderVal;
                         // 更新列表
                         this.getAllStudent();
                     }
@@ -395,7 +411,8 @@
             },
             // 取消修改学生信息
             cancelChange() {
-                this.currentRowObj = { ...this.rowCurrentRowObj };
+                this.currentRowObj = { ...this.rawCurrentRowObj };
+                this.majorCascaderVal = this.rawMajorCascaderVal;
             },
             // 收起表单或描述列表
             pullUp() {
