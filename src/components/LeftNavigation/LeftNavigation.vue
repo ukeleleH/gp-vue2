@@ -116,20 +116,26 @@
                             <el-menu-item index="6-2">导师管理</el-menu-item>
                         </router-link>
                     </el-submenu>
+                    <el-submenu
+                        index="7"
+                        v-if="loginInformation.identity === 3"
+                    >
+                        <template slot="title">
+                            <i class="el-icon-menu"></i>
+                            <span>其他管理</span>
+                        </template>
+                        <router-link to="/student_manage">
+                            <el-menu-item index="7-1">公告管理</el-menu-item>
+                        </router-link>
+                        <router-link to="/tutor_manage">
+                            <el-menu-item index="7-2">
+                                专业、班级管理
+                            </el-menu-item>
+                        </router-link>
+                    </el-submenu>
                 </el-menu>
             </el-col>
-            <el-col
-                :span="20"
-                v-if="
-                    $route.path === '/tutor_manage' ||
-                    $route.path === '/student_manage'
-                "
-            >
-                <keep-alive>
-                    <router-view> </router-view>
-                </keep-alive>
-            </el-col>
-            <el-col :span="19" :offset="1" v-else>
+            <el-col :span="19" :offset="1">
                 <keep-alive :exclude="['Profile']">
                     <router-view> </router-view>
                 </keep-alive>

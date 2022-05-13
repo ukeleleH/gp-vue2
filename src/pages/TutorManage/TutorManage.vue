@@ -21,7 +21,7 @@
             <el-table-column
                 slot="isInsideSchool"
                 label="是否本校"
-                width="100px"
+                min-width="100px"
             >
                 <template slot-scope="{ row }">
                     <span

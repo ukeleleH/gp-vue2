@@ -2,6 +2,7 @@
     <el-table
         :data="dataList"
         :height="height"
+        tooltip-effect="light"
         class="commonTable"
         @row-dblclick="showDetail"
     >
@@ -11,7 +12,9 @@
                 :key="item"
                 :prop="item"
                 :width="item | columnWidthFilter"
+                :min-width="item | columnMinWidthFilter"
                 :label="item | labelFilter"
+                :show-overflow-tooltip="true"
             >
             </el-table-column>
         </slot>
@@ -21,10 +24,10 @@
 
 <script>
     import labelFilterMixin from "@/mixin/labelFilter.mixin";
-    import columnWidthFilter from "@/mixin/columnWidthFilter.mixin";
+    import columnWidthMixin from "@/mixin/columnWidthFilter.mixin";
     export default {
         name: "CommonTable",
-        mixins: [labelFilterMixin, columnWidthFilter],
+        mixins: [labelFilterMixin, columnWidthMixin],
         props: {
             height: {
                 type: Number,
@@ -46,9 +49,12 @@
     };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .commonTable {
         width: 100%;
         user-select: none;
+    }
+    .el-table__fixed-body-wrapper {
+        top: 65px !important;
     }
 </style>

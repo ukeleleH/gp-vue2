@@ -13,23 +13,27 @@ export default {
                 case "name":
                     return "140px";
                 case "tel":
-                    return "180px";
+                    return "150px";
                 case "gender":
                     return "100px";
                 case "major":
-                    return "220px";
-                case "class_grade":
                     return "200px";
-                case "opportunity":
-                    return "180px";
                 case "qq":
-                    return "120px";
+                    return "150px";
+            }
+        },
+        columnMinWidthFilter(data) {
+            switch (data) {
                 case "title":
                     return "100px";
                 case "degree":
                     return "100px";
                 case "introduction":
-                    return "180px";
+                    return "100px";
+                case "class_grade":
+                    return "175rpx";
+                case "opportunity":
+                    return "175px";
             }
         }
     }
