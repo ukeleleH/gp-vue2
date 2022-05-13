@@ -1,32 +1,46 @@
 <template>
     <div class="commonDesc">
-        <el-descriptions :column="3" border>
-            <template slot="extra">
-                <el-button type="primary" size="small" @click="pullUp">
-                    收起
+        <el-form :model="descObj" :rules="changeRules" :ref="refName">
+            <el-descriptions :column="3" border>
+                <template slot="extra">
+                    <el-button type="primary" size="small" @click="pullUp">
+                        收起
+                    </el-button>
+                </template>
+                <el-descriptions-item
+                    v-for="item in labels"
+                    :key="item"
+                    :label="item | labelFilter(descObj)"
+                >
+                    <el-form-item :prop="item">
+                        <slot :name="item" :descObj="descObj">
+                            <el-input
+                                v-model="descObj[item]"
+                                :disabled="item === 'password' ? true : false"
+                            ></el-input>
+                        </slot>
+                    </el-form-item>
+                </el-descriptions-item>
+            </el-descriptions>
+            <div class="btn_container">
+                <el-button
+                    type="success"
+                    plain
+                    size="small"
+                    @click="confirmChange(refName, $refs)"
+                >
+                    确认修改
                 </el-button>
-            </template>
-            <el-descriptions-item
-                v-for="item in labels"
-                :key="item"
-                :label="item | labelFilter(descObj)"
-            >
-                <slot :name="item" :descObj="descObj">
-                    <el-input
-                        v-model="descObj[item]"
-                        :disabled="item === 'password' ? true : false"
-                    ></el-input>
-                </slot>
-            </el-descriptions-item>
-        </el-descriptions>
-        <div class="btn_container">
-            <el-button type="success" plain size="small" @click="confirmChange">
-                确认修改
-            </el-button>
-            <el-button type="warning" plain size="small" @click="cancelChange">
-                重置
-            </el-button>
-        </div>
+                <el-button
+                    type="warning"
+                    plain
+                    size="small"
+                    @click="cancelChange(refName, $refs)"
+                >
+                    重置
+                </el-button>
+            </div>
+        </el-form>
     </div>
 </template>
 
@@ -54,6 +68,14 @@
             },
             cancelChange: {
                 type: Function,
+                required: true,
+            },
+            refName: {
+                type: String,
+                required: true,
+            },
+            changeRules: {
+                type: Object,
                 required: true,
             },
         },

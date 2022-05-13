@@ -55,8 +55,10 @@
         <!-- 通用描述列表 -->
         <common-desc
             v-show="isDescShow"
+            refName="changeStudent"
             :labels="studentFormLabels"
             :descObj="currentRowObj"
+            :changeRules="changeStudentRules"
             :pullUp="pullUp"
             :confirmChange="confirmChange"
             :cancelChange="cancelChange"
@@ -100,11 +102,11 @@
         </common-desc>
         <!-- 通用表单 -->
         <common-form
+            refName="newStudent"
             v-show="isFormShow"
             :labels="studentFormLabels"
             :addForm="studentForm"
-            :addRules="studentFormRules"
-            :refName="'newStudent'"
+            :addRules="addStudentRules"
             :pullUp="pullUp"
             :confirmAdd="confirmAdd"
             :cancelAdd="cancelAdd"
@@ -174,7 +176,28 @@
         mixins: [searchMajorMixin],
         components: { CommonTabel, CommonForm, CommonDesc },
         data() {
+            // 修改学生时验证学号的规则
             let checkStudentId = (_, value, callback) => {
+                let reg = /^\d{10}$/;
+                if (value === "") {
+                    callback(new Error("请输入学生学号"));
+                } else if (!reg.test(value)) {
+                    callback(new Error("学号只能是10位数字"));
+                } else if (this.currentRowObj.sno != this.rawCurrentRowObj.sno) {
+                    // 查询是否存在
+                    adminIsUniqueStudentId(value.trim()).then((data) => {
+                        if (data) {
+                            callback(new Error("学号已存在"));
+                        } else {
+                            callback();
+                        }
+                    });
+                } else {
+                    callback();
+                }
+            };
+            // 添加学生时验证学号的规则
+            let checkStudentId2 = (_, value, callback) => {
                 let reg = /^\d{10}$/;
                 if (value === "") {
                     callback(new Error("请输入学生学号"));
@@ -249,8 +272,29 @@
                     major: "",
                     class_grade: "",
                 },
-                studentFormRules: {
+
+                // 修改学生时的表单规则
+                changeStudentRules: {
                     sno: [{ validator: checkStudentId, trigger: "blur" }],
+                    tel: [{ validator: checkTel, trigger: "blur" }],
+                    name: [
+                        {
+                            required: true,
+                            message: "请输入学生姓名",
+                            trigger: "blur",
+                        },
+                    ],
+                    class_grade: [
+                        {
+                            required: true,
+                            message: "请选择学生班级",
+                        },
+                    ],
+                },
+
+                // 添加学生时的表单规则
+                addStudentRules: {
+                    sno: [{ validator: checkStudentId2, trigger: "blur" }],
                     password: [{ validator: validatePass, trigger: "blur" }],
                     tel: [{ validator: checkTel, trigger: "blur" }],
                     name: [
@@ -347,7 +391,6 @@
             confirmAdd(refName, refs) {
                 refs[refName].validate(async (valid) => {
                     if (valid) {
-                        console.log(this.studentForm);
                         // 如果校验通过，则发送请求
                         let data = await adminAddStudent(this.studentForm);
                         if (data) {
@@ -361,13 +404,13 @@
                     }
                 });
             },
-            // 重置表单，取消添加
+            // 取消新增学生信息,重置表单
             cancelAdd(refName, refs) {
                 refs[refName].resetFields();
                 this.majorCascaderVal = [];
             },
             // 确认修改学生信息
-            async confirmChange() {
+            confirmChange(refName, refs) {
                 const { sno, password, name, tel, gender, major, class_grade } =
                     this.currentRowObj;
                 if (
@@ -386,31 +429,33 @@
                     });
                     return;
                 }
-                // 发送请求，修改学生信息
-                try {
-                    let data = await adminChangeStudent(this.currentRowObj);
-                    if (data) {
-                        this.$message({
-                            type: "success",
-                            message: "学生信息修改成功",
-                            center: true,
-                        });
-                        // 更新原数据
-                        this.rawCurrentRowObj = { ...this.currentRowObj };
-                        this.rawMajorCascaderVal = this.majorCascaderVal;
-                        // 更新列表
-                        this.getAllStudent();
+                // 表单校验
+                refs[refName].validate(async (valid) => {
+                    if (valid) {
+                        // 发送请求，修改学生信息
+                        let data = await adminChangeStudent(this.currentRowObj);
+                        // 当学号有修改时，也要更新课题列表
+                        if (this.currentRowObj.sno != this.rawCurrentRowObj.sno) {
+                            this.$bus.$emit("projectHasChanged");
+                        }
+                        if (data) {
+                            this.$message({
+                                type: "success",
+                                message: "学生信息修改成功",
+                                center: true,
+                            });
+                            // 更新原数据
+                            this.rawCurrentRowObj = { ...this.currentRowObj };
+                            this.rawMajorCascaderVal = this.majorCascaderVal;
+                            // 更新学生列表
+                            this.getAllStudent();
+                        }
                     }
-                } catch {
-                    this.$message({
-                        type: "error",
-                        message: "学生信息修改失败",
-                        center: true,
-                    });
-                }
+                });
             },
             // 取消修改学生信息
-            cancelChange() {
+            cancelChange(refName, refs) {
+                refs[refName].resetFields();
                 this.currentRowObj = { ...this.rawCurrentRowObj };
                 this.majorCascaderVal = this.rawMajorCascaderVal;
             },

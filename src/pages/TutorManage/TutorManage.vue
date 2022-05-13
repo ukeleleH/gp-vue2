@@ -73,6 +73,8 @@
         <!-- 通用描述列表 -->
         <common-desc
             v-show="isDescShow"
+            refName="changeTutor"
+            :changeRules="changeTutorRules"
             :labels="tutorFormLabels"
             :descObj="currentRowObj"
             :pullUp="pullUp"
@@ -129,7 +131,7 @@
             v-show="isFormShow"
             :labels="tutorFormLabels"
             :addForm="tutorForm"
-            :addRules="tutorFormRules"
+            :addRules="addTutorRules"
             :refName="'newTutor'"
             :pullUp="pullUp"
             :confirmAdd="confirmAdd"
@@ -206,7 +208,28 @@
         name: "TutorManage",
         components: { CommonTabel, CommonForm, CommonDesc },
         data() {
-            let checkTutorId = (rule, value, callback) => {
+            // 修改导师导师时的，工号校验规则
+            let checkTutorId1 = (rule, value, callback) => {
+                let reg = /^\d{8,10}$/;
+                if (!value) {
+                    callback(new Error("请输入导师工号"));
+                } else if (!reg.test(value)) {
+                    callback(new Error("工号只能是8-10位数字"));
+                } else if (this.currentRowObj.tno != this.rawCurrentRowObj.tno) {
+                    // 查询是否存在
+                    adminIsUniqueTutorId(value.trim()).then((data) => {
+                        if (data) {
+                            callback(new Error("工号已存在"));
+                        } else {
+                            callback();
+                        }
+                    });
+                } else {
+                    callback();
+                }
+            };
+            // 新增导师时的，工号校验规则
+            let checkTutorId2 = (rule, value, callback) => {
                 let reg = /^\d{8,10}$/;
                 if (!value) {
                     callback(new Error("请输入导师工号"));
@@ -250,14 +273,14 @@
             let checkQQ = (rule, value, callback) => {
                 let reg = /^\d{6,12}$/;
                 if (!reg.test(value)) {
-                    callback(new Error("QQ号只能是数字,且为6-12位"));
+                    callback(new Error("QQ号只能是6-12位数字"));
                 } else {
                     callback();
                 }
             };
             let checkIntro = (rule, value, callback) => {
                 if (value.trim() === "") {
-                    callback(new Error("导师介绍不能为空"));
+                    callback(new Error("介绍不能为空"));
                 } else if (value.length < 10) {
                     callback(new Error("请至少输入10个字"));
                 } else {
@@ -269,7 +292,7 @@
                 isFormShow: false,
 
                 currentRowObj: {},
-                rowCurrentRowObj: {},
+                rawCurrentRowObj: {},
 
                 tutorTableHeight: 650,
                 tutorTableDescHeaders: [],
@@ -299,8 +322,24 @@
                     inInsideSchool: "",
                     introduction: "",
                 },
-                tutorFormRules: {
-                    tno: [{ validator: checkTutorId, trigger: "blur" }],
+                // 修改导师时的表单校验规则
+                changeTutorRules: {
+                    tno: [{ validator: checkTutorId1, trigger: "blur" }],
+                    tel: [{ validator: checkTel, trigger: "blur" }],
+                    qq: [{ validator: checkQQ, trigger: "blur" }],
+                    introduction: [{ validator: checkIntro, trigger: "blur" }],
+                    name: [
+                        {
+                            required: true,
+                            message: "请输入导师姓名",
+                            trigger: "blur",
+                        },
+                    ],
+                },
+
+                // 新增导师时的表单校验规则
+                addTutorRules: {
+                    tno: [{ validator: checkTutorId2, trigger: "blur" }],
                     password: [{ validator: validatePass, trigger: "blur" }],
                     tel: [{ validator: checkTel, trigger: "blur" }],
                     qq: [{ validator: checkQQ, trigger: "blur" }],
@@ -358,10 +397,10 @@
                 this.isFormShow = false;
                 this.isDescShow = true;
                 this.currentRowObj = { ...row };
-                this.rowCurrentRowObj = { ...row };
+                this.rawCurrentRowObj = { ...row };
             },
             // 确认修改导师信息
-            async confirmChange() {
+            confirmChange(refName, refs) {
                 const {
                     tno,
                     password,
@@ -375,16 +414,16 @@
                     intruduction,
                 } = this.currentRowObj;
                 if (
-                    tno === this.rowCurrentRowObj.tno &&
-                    password === this.rowCurrentRowObj.password &&
-                    name === this.rowCurrentRowObj.name &&
-                    tel === this.rowCurrentRowObj.tel &&
-                    gender === this.rowCurrentRowObj.gender &&
-                    qq === this.rowCurrentRowObj.qq &&
-                    title === this.rowCurrentRowObj.title &&
-                    degree === this.rowCurrentRowObj.degree &&
-                    isInsideSchool === this.rowCurrentRowObj.isInsideSchool &&
-                    intruduction === this.rowCurrentRowObj.intruduction
+                    tno === this.rawCurrentRowObj.tno &&
+                    password === this.rawCurrentRowObj.password &&
+                    name === this.rawCurrentRowObj.name &&
+                    tel === this.rawCurrentRowObj.tel &&
+                    gender === this.rawCurrentRowObj.gender &&
+                    qq === this.rawCurrentRowObj.qq &&
+                    title === this.rawCurrentRowObj.title &&
+                    degree === this.rawCurrentRowObj.degree &&
+                    isInsideSchool === this.rawCurrentRowObj.isInsideSchool &&
+                    intruduction === this.rawCurrentRowObj.intruduction
                 ) {
                     this.$message({
                         message: "导师信息未作修改",
@@ -393,31 +432,32 @@
                     });
                     return;
                 }
-                // 发送请求，修改导师信息
-                try {
-                    let data = await adminChangeTutor(this.currentRowObj);
-                    if (data) {
-                        this.$message({
-                            type: "success",
-                            message: "导师信息修改成功",
-                            center: true,
-                        });
-                        // 更新原数据
-                        this.rowCurrentRowObj = { ...this.currentRowObj };
-                        // 更新列表
-                        this.getAllTutor();
+                // 表单校验
+                refs[refName].validate(async (valid) => {
+                    if (valid) {
+                        let data = await adminChangeTutor(this.currentRowObj);
+                        // 当工号有修改时，也要更新课题列表
+                        if (this.currentRowObj.tno != this.rawCurrentRowObj.tno) {
+                            this.$bus.$emit("projectHasChanged");
+                        }
+                        if (data) {
+                            this.$message({
+                                type: "success",
+                                message: "导师信息修改成功",
+                                center: true,
+                            });
+                            // 更新原数据
+                            this.rawCurrentRowObj = { ...this.currentRowObj };
+                            // 更新列表
+                            this.getAllTutor();
+                        }
                     }
-                } catch {
-                    this.$message({
-                        type: "error",
-                        message: "导师信息修改失败",
-                        center: true,
-                    });
-                }
+                });
             },
             // 取消修改导师信息
-            cancelChange() {
-                this.currentRowObj = { ...this.rowCurrentRowObj };
+            cancelChange(refName, refs) {
+                refs[refName].resetFields();
+                this.currentRowObj = { ...this.rawCurrentRowObj };
             },
             // 新增导师信息
             addTutor() {

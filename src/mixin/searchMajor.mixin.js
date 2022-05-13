@@ -69,20 +69,21 @@ export default {
                             // 如果是学生个人信息修改页
                             if (this.$route.path === "/profile") {
                                 this.studentForm.major = innerItem.label
+                                this.studentForm.class_grade = ""
                             }
                             // 如果是管理员的学生管理页
                             if (this.$route.path === "/student_manage") {
                                 // 如果是修改学生信息
                                 if (this.isDescShow) {
                                     this.currentRowObj.major = innerItem.label
+                                    this.currentRowObj.class_grade = ""
                                 }
                                 // 如果是新增学生信息
                                 if (this.isFormShow) {
                                     this.studentForm.major = innerItem.label
+                                    this.studentForm.class_grade = ""
                                 }
                             }
-                            // 清空 class_grade 
-                            this.studentForm.class_grade = ""
                             // 发生请求，获取班级数据
                             let data = await systemSearchClass(innerItem.type)
                             this.classArr = data

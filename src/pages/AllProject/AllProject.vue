@@ -130,6 +130,7 @@
                     :total="totalNum"
                     :pager-count="5"
                     :page-size="10"
+                    :current-page="currentPage"
                     @current-change="handleCurrentChange"
                 >
                 </el-pagination>
@@ -141,6 +142,7 @@
                     :total="filtersTotalNum"
                     :pager-count="5"
                     :page-size="10"
+                    :current-page="filtersCurrentPage"
                     @current-change="handleFilterCurrentChange"
                 >
                 </el-pagination>
