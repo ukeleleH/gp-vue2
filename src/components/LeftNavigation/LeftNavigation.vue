@@ -124,10 +124,10 @@
                             <i class="el-icon-menu"></i>
                             <span>其他管理</span>
                         </template>
-                        <router-link to="/student_manage">
+                        <router-link to="/notice_manage">
                             <el-menu-item index="7-1">公告管理</el-menu-item>
                         </router-link>
-                        <router-link to="/tutor_manage">
+                        <router-link to="/majorclass_manage">
                             <el-menu-item index="7-2">
                                 专业、班级管理
                             </el-menu-item>

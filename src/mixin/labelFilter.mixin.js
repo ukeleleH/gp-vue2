@@ -1,6 +1,6 @@
 export default {
     filters: {
-        labelFilter(data) {
+        labelFilter(data, index) {
             switch (data) {
                 case "id":
                     return "ID";
@@ -27,13 +27,21 @@ export default {
                 case "qq":
                     return "QQ号";
                 case "title":
-                    return "职称";
+                    if (index === 7) {
+                        return "职称";
+                    } else {
+                        return "标题";
+                    }
                 case "degree":
                     return "学位";
                 case "isInsideSchool":
                     return "是否本校";
                 case "introduction":
                     return "介绍";
+                case "content":
+                    return "内容";
+                case "url":
+                    return "链接";
             }
         },
     },

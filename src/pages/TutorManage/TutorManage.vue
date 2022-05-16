@@ -393,7 +393,7 @@
             },
             // 点击修改按钮
             changeTutor(row) {
-                this.tutorTableHeight = 330;
+                this.tutorTableHeight = 262;
                 this.isFormShow = false;
                 this.isDescShow = true;
                 this.currentRowObj = { ...row };
@@ -461,7 +461,7 @@
             },
             // 新增导师信息
             addTutor() {
-                this.tutorTableHeight = 330;
+                this.tutorTableHeight = 262;
                 this.isFormShow = true;
                 this.isDescShow = false;
             },

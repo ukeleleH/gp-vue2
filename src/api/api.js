@@ -110,3 +110,13 @@ export const adminAddTutor = (data) => { return $axios.post("/admin/addTutor", d
 
 // 管理员修改导师信息
 export const adminChangeTutor = (data) => { return $axios.post("/admin/changeTutor", data) }
+
+// 管理员新增公告
+export const adminAddNotice = (data) => { return $axios.post("/admin/addNotice", data) }
+
+// 管理员修改公告
+export const adminChangeNotice = (data) => { return $axios.post("/admin/changeNotice", data) }
+
+// 管理员删除公告
+export const adminDeleteNotice = (id) => { return $axios.get(`/admin/deleteNotice?id=${id}`) }
+

@@ -22,10 +22,14 @@ export default {
                     return "150px";
             }
         },
-        columnMinWidthFilter(data) {
+        columnMinWidthFilter(data, index) {
             switch (data) {
                 case "title":
-                    return "100px";
+                    if (index === 7) {
+                        return "100px";
+                    } else {
+                        return "175px";
+                    }
                 case "degree":
                     return "100px";
                 case "introduction":
@@ -33,6 +37,10 @@ export default {
                 case "class_grade":
                     return "175rpx";
                 case "opportunity":
+                    return "175px";
+                case "content":
+                    return "300px";
+                case "url":
                     return "175px";
             }
         }

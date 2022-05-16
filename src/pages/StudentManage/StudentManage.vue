@@ -341,7 +341,7 @@
             },
             // 新增按钮
             addStudent() {
-                this.studentTableHeight = 330;
+                this.studentTableHeight = 262;
                 this.isFormShow = true;
                 this.isDescShow = false;
                 this.majorCascaderVal = []; // 清空 majorCascaderVal
@@ -353,7 +353,7 @@
             },
             // 修改学生信息
             changeStudent(row) {
-                this.studentTableHeight = 330;
+                this.studentTableHeight = 262;
                 this.isFormShow = false;
                 this.isDescShow = true;
                 this.currentRowObj = { ...row };

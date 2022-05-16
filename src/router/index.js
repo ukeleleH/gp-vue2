@@ -9,6 +9,8 @@ import DocumentTranslation from "@/pages/DocumentTranslation/DocumentTranslation
 import DatabaseDesign from "@/pages/DatabaseDesign/DatabaseDesign.vue"
 import StudentManage from "@/pages/StudentManage/StudentManage.vue"
 import TutorManage from "@/pages/TutorManage/TutorManage.vue"
+import NoticeManage from "@/pages/NoticeManage/NoticeManage.vue"
+import MajorClassManage from "@/pages/MajorClassManage/MajorClassManage.vue"
 import NotFound from "@/components/NotFound.vue"
 
 import { MessageBox } from 'element-ui'
@@ -39,6 +41,8 @@ const router = new VueRouter({
         { path: "/database_design", component: DatabaseDesign },
         { path: "/student_manage", component: StudentManage },
         { path: "/tutor_manage", component: TutorManage },
+        { path: "/notice_manage", component: NoticeManage },
+        { path: "/majorclass_manage", component: MajorClassManage },
         { path: "/all_project/*", component: NotFound },
     ]
 })

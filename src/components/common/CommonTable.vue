@@ -6,14 +6,14 @@
         class="commonTable"
         @row-dblclick="showDetail"
     >
-        <slot v-for="item in headers" :name="item">
+        <slot v-for="(item, index) in headers" :name="item">
             <el-table-column
                 :sortable="item === 'id' ? true : false"
                 :key="item"
                 :prop="item"
                 :width="item | columnWidthFilter"
-                :min-width="item | columnMinWidthFilter"
-                :label="item | labelFilter"
+                :min-width="item | columnMinWidthFilter(index)"
+                :label="item | labelFilter(index)"
                 :show-overflow-tooltip="true"
             >
             </el-table-column>
@@ -54,7 +54,7 @@
         width: 100%;
         user-select: none;
     }
-    .el-table__fixed-body-wrapper {
-        top: 65px !important;
-    }
+    // .el-table__fixed-body-wrapper {
+    //     top: 65px !important;
+    // }
 </style>
