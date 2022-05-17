@@ -5,7 +5,7 @@
         :before-close="cancelHandler"
     >
         <el-form :model="form" :rules="rules" ref="commonForm">
-            <slot v-for="item in labels">
+            <slot v-for="item in labels" :name="item">
                 <el-form-item
                     :key="item"
                     :label="item | labelFilter"
@@ -56,6 +56,8 @@
                         return "内容";
                     case "url":
                         return "链接";
+                    case "name":
+                        return "名称";
                 }
             },
         },
@@ -65,7 +67,7 @@
                 this.$emit("closeDialog");
             },
             resetHandler() {
-                if (this.title === "修改公告") {
+                if (this.title === "修改公告" || this.title === "修改专业") {
                     this.$emit("resetDialog", this.$refs);
                 } else {
                     this.$refs.commonForm.resetFields();

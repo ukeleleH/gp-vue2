@@ -11,7 +11,11 @@ export default {
                 case "ano":
                     return "工号";
                 case "name":
-                    return "姓名";
+                    if (index === 1) {
+                        return "专业名称";
+                    } else {
+                        return "姓名";
+                    }
                 case "password":
                     return "密码";
                 case "tel":
@@ -42,6 +46,8 @@ export default {
                     return "内容";
                 case "url":
                     return "链接";
+                case "type":
+                    return "下属班级数量"
             }
         },
     },

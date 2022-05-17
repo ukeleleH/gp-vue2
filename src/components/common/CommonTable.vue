@@ -11,7 +11,7 @@
                 :sortable="item === 'id' ? true : false"
                 :key="item"
                 :prop="item"
-                :width="item | columnWidthFilter"
+                :width="item | columnWidthFilter(index)"
                 :min-width="item | columnMinWidthFilter(index)"
                 :label="item | labelFilter(index)"
                 :show-overflow-tooltip="true"

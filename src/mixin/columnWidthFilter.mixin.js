@@ -1,6 +1,6 @@
 export default {
     filters: {
-        columnWidthFilter(data) {
+        columnWidthFilter(data, index) {
             switch (data) {
                 case "id":
                     return "70px";
@@ -11,7 +11,11 @@ export default {
                 case "ano":
                     return "120px";
                 case "name":
-                    return "140px";
+                    if (index === 3) {
+                        return "140px";   // 学生和导师管理表格的名字字段列宽
+                    } else {
+                        return "0px"
+                    }
                 case "tel":
                     return "150px";
                 case "gender":
@@ -42,6 +46,13 @@ export default {
                     return "300px";
                 case "url":
                     return "175px";
+                case "name": {
+                    if (index === 1) {
+                        return "250px";    // 专业表格的名称字段列宽
+                    }
+                }
+                case "type":
+                    return "250px"
             }
         }
     }

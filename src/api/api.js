@@ -33,6 +33,9 @@ export const systemSearchDepartment = () => { return $axios.get("/system/searchD
 // 查询专业信息
 export const systemSearchMajor = () => { return $axios.get("/system/searchMajor") }
 
+// 按学科部查询专业信息
+export const systemSearchMajorByDid = (d_id) => { return $axios.get(`/system/searchMajorByDid?d_id=${d_id}`) }
+
 // 查询班级信息
 export const systemSearchClass = (type) => { return $axios.get(`/system/searchClass?limitNum=${type}`) }
 
@@ -119,4 +122,13 @@ export const adminChangeNotice = (data) => { return $axios.post("/admin/changeNo
 
 // 管理员删除公告
 export const adminDeleteNotice = (id) => { return $axios.get(`/admin/deleteNotice?id=${id}`) }
+
+// 管理员新增专业
+export const adminAddMajor = (data) => { return $axios.post("/admin/addMajor", data) }
+
+// 管理员修改专业
+export const adminChangeMajor = (data) => { return $axios.post("/admin/changeMajor", data) }
+
+// 管理员删除专业
+export const adminDeleteMajor = (id) => { return $axios.get(`/admin/deleteMajor?id=${id}`) }
 

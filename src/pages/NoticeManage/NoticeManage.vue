@@ -52,6 +52,17 @@
             @closeDialog="closeAdd"
             @submitDialog="submitAdd"
         >
+            <el-form-item slot="content" label="内容" prop="content">
+                <el-input
+                    show-word-limit
+                    type="textarea"
+                    resize="vertical"
+                    maxlength="3000"
+                    v-model="addForm.content"
+                    :autosize="{ minRows: 3, maxRows: 5 }"
+                >
+                </el-input>
+            </el-form-item>
         </common-dialog>
         <!-- 修改 dialog -->
         <common-dialog
@@ -64,6 +75,16 @@
             @submitDialog="submitChange"
             @resetDialog="resetChange"
         >
+            <el-form-item slot="content" label="内容" prop="content">
+                <el-input
+                    type="textarea"
+                    resize="vertical"
+                    maxlength="3000"
+                    v-model="changeForm.content"
+                    :autosize="{ minRows: 3, maxRows: 5 }"
+                >
+                </el-input>
+            </el-form-item>
         </common-dialog>
     </div>
 </template>
