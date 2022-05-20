@@ -5,6 +5,7 @@ import ProjectDetail from "@/pages/AllProject/ProjectDetail/ProjectDetail.vue"
 import MyProject from "@/pages/MyProject/MyProject.vue"
 import HasPublishedProject from "@/pages/HasPublishedProject/HasPublishedProject.vue"
 import OpeningReport from "@/pages/OpeningReport/OpeningReport.vue"
+import OpeningReportReview from "@/pages/OpeningReportReview/OpeningReportReview.vue"
 import DocumentTranslation from "@/pages/DocumentTranslation/DocumentTranslation.vue"
 import DatabaseDesign from "@/pages/DatabaseDesign/DatabaseDesign.vue"
 import StudentManage from "@/pages/StudentManage/StudentManage.vue"
@@ -37,6 +38,7 @@ const router = new VueRouter({
         { path: "/my_project", component: MyProject },
         { path: "/has_published_project", component: HasPublishedProject },
         { path: "/opening_report", component: OpeningReport },
+        { path: "/opening_report_review", component: OpeningReportReview },
         { path: "/document_translation", component: DocumentTranslation },
         { path: "/database_design", component: DatabaseDesign },
         { path: "/student_manage", component: StudentManage },

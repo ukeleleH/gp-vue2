@@ -52,57 +52,49 @@
                             </el-menu-item>
                         </router-link>
                     </el-submenu>
-                    <el-submenu
-                        index="3"
-                        v-if="loginInformation.identity !== 3"
-                    >
+                    <el-submenu index="3" v-if="loginInformation.major">
                         <template slot="title">
                             <i class="el-icon-date"></i>
-                            <span>前期任务</span>
+                            <span>阶段任务</span>
                         </template>
-                        <router-link
-                            to="/opening_report"
-                            v-show="loginInformation.major"
-                        >
+                        <router-link to="/opening_report">
                             <el-menu-item index="3-1">开题报告</el-menu-item>
                         </router-link>
-                        <router-link
-                            to="/document_translation"
-                            v-show="loginInformation.major"
-                        >
+                        <router-link to="/document_translation">
                             <el-menu-item index="3-2">文献翻译</el-menu-item>
                         </router-link>
-                    </el-submenu>
-                    <el-submenu
-                        index="4"
-                        v-if="loginInformation.identity !== 3"
-                    >
-                        <template slot="title">
-                            <i class="el-icon-s-platform"></i>
-                            <span>中期任务</span>
-                        </template>
-                        <router-link
-                            to="/database_design"
-                            v-show="loginInformation.major"
-                        >
-                            <el-menu-item index="4-1">数据库设计</el-menu-item>
+                        <router-link to="/database_design">
+                            <el-menu-item index="3-3">数据库设计</el-menu-item>
                         </router-link>
-                        <el-menu-item index="4-2">编码</el-menu-item>
-                        <el-menu-item index="4-3">测试</el-menu-item>
+                        <el-menu-item index="3-4">论文初稿</el-menu-item>
+                        <el-menu-item index="3-5">论文定稿</el-menu-item>
+                    </el-submenu>
+                    <el-submenu index="3" v-if="loginInformation.title">
+                        <template slot="title">
+                            <i class="el-icon-date"></i>
+                            <span>阶段任务</span>
+                        </template>
+                        <router-link to="/opening_report_review">
+                            <el-menu-item index="3-1">
+                                开题报告批阅
+                            </el-menu-item>
+                        </router-link>
+                        <router-link to="/document_translation">
+                            <el-menu-item index="3-2">
+                                文献翻译批阅
+                            </el-menu-item>
+                        </router-link>
+                        <el-menu-item index="3-3">论文初稿批阅</el-menu-item>
+                        <el-menu-item index="3-4">论文定稿批阅</el-menu-item>
+                    </el-submenu>
+                    <el-submenu index="4" v-if="loginInformation.major">
+                        <template slot="title">
+                            <i class="el-icon-edit-outline"></i>
+                            <span>Q&A</span>
+                        </template>
                     </el-submenu>
                     <el-submenu
                         index="5"
-                        v-if="loginInformation.identity !== 3"
-                    >
-                        <template slot="title">
-                            <i class="el-icon-edit-outline"></i>
-                            <span>后期任务</span>
-                        </template>
-                        <el-menu-item index="5-1">毕业论文初稿</el-menu-item>
-                        <el-menu-item index="5-2">毕业论文定稿</el-menu-item>
-                    </el-submenu>
-                    <el-submenu
-                        index="6"
                         v-if="loginInformation.identity === 3"
                     >
                         <template slot="title">
@@ -110,14 +102,14 @@
                             <span>人员信息管理</span>
                         </template>
                         <router-link to="/student_manage">
-                            <el-menu-item index="6-1">学生管理</el-menu-item>
+                            <el-menu-item index="5-1">学生管理</el-menu-item>
                         </router-link>
                         <router-link to="/tutor_manage">
-                            <el-menu-item index="6-2">导师管理</el-menu-item>
+                            <el-menu-item index="5-2">导师管理</el-menu-item>
                         </router-link>
                     </el-submenu>
                     <el-submenu
-                        index="7"
+                        index="6"
                         v-if="loginInformation.identity === 3"
                     >
                         <template slot="title">
@@ -125,10 +117,10 @@
                             <span>其他管理</span>
                         </template>
                         <router-link to="/notice_manage">
-                            <el-menu-item index="7-1">公告管理</el-menu-item>
+                            <el-menu-item index="6-1">公告管理</el-menu-item>
                         </router-link>
                         <router-link to="/majorclass_manage">
-                            <el-menu-item index="7-2">
+                            <el-menu-item index="6-2">
                                 专业、班级管理
                             </el-menu-item>
                         </router-link>

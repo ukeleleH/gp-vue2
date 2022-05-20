@@ -5,7 +5,7 @@
             <!-- 上传组件 -->
             <el-col :span="6">
                 <el-upload
-                    action="/api/gp/student/upload"
+                    :action="`/api/gp/student/uploadOpeningReport?sno=${sno}&tno=${tno}`"
                     drag
                     accept=".doc,.docx"
                     :limit="1"
@@ -41,10 +41,7 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button
-                            type="primary"
-                            @click="submit('openingReportForm')"
-                        >
+                        <el-button type="primary" @click="submit">
                             上传
                         </el-button>
                     </el-form-item>
@@ -53,41 +50,42 @@
         </el-row>
 
         <div class="title" style="margin-top: 50px">已上传的开题报告</div>
-        <el-table :data="tableData" stripe style="width: 100%">
-            <el-table-column prop="orderNumber" label="序号" min-width="180">
+        <el-table
+            height="250"
+            :data="openingReportList"
+            stripe
+            style="width: 100%"
+        >
+            <el-table-column label="序号" type="index" min-width="250px">
             </el-table-column>
-            <el-table-column prop="name" label="名称" min-width="180">
+            <el-table-column prop="fileName" label="文件名" min-width="180">
             </el-table-column>
-            <el-table-column label="审核状态" min-width="180">
-                <span
-                    :style="
-                        tableData.auditState
-                            ? { color: 'green' }
-                            : { color: 'red' }
-                    "
-                >
-                    {{ tableData.auditState ? "已审核" : "待审核" }}
-                </span>
+            <el-table-column label="状态" min-width="180">
+                <template slot-scope="{ row }">
+                    <span v-if="row.status === 0" style="color: #e6a23c">
+                        待批阅
+                    </span>
+                    <span v-if="row.status === 1" style="color: #f56c6c">
+                        未通过
+                    </span>
+                    <span v-if="row.status === 2" style="color: #67c23a">
+                        已通过
+                    </span>
+                </template>
             </el-table-column>
-            <el-table-column label="通过状态" min-width="180">
-                <span
-                    :style="
-                        tableData.passState
-                            ? { color: 'green' }
-                            : { color: 'red' }
-                    "
-                >
-                    {{
-                        tableData.passState
-                            ? "已通过"
-                            : tableData.passState === false
-                            ? "未通过"
-                            : ""
-                    }}
-                </span>
+            <el-table-column label="上传时间" prop="uploadTime" min-width="180">
             </el-table-column>
-            <el-table-column label="操作">
-                <el-button type="text">下载</el-button>
+            <el-table-column label="评语" prop="comment" min-width="180">
+            </el-table-column>
+            <el-table-column label="操作" min-width="180">
+                <template slot-scope="{ row }">
+                    <el-button type="text" @click="download(row)">
+                        下载
+                    </el-button>
+                    <el-button type="text" @click="deleteReport(row)">
+                        删除
+                    </el-button>
+                </template>
             </el-table-column>
         </el-table>
     </div>
@@ -95,19 +93,31 @@
 
 <script>
     import { MessageBox } from "element-ui";
+    import {
+        getMyOpeningReport,
+        downloadOpeningReport,
+        deleteOpeningReport,
+        selectTutorTno,
+    } from "@/api/api";
+    import fileDownload from "@/mixin/fileDownload.mixin";
     export default {
         name: "OpeningReport",
+        mixins: [fileDownload],
         data() {
             var checkSummary = (_, value, callback) => {
                 if (!value) {
                     callback(new Error("个人总结不能为空"));
-                } else if (value.length < 10 || value.length > 255) {
+                } else if (value.length < 10) {
                     callback(new Error("请填写至少10个字"));
                 } else {
                     callback();
                 }
             };
             return {
+                // 学生学号
+                sno: "",
+                // 导师工号
+                tno: "",
                 // 开题报告的表单
                 openingReportForm: {
                     summary: "",
@@ -116,29 +126,86 @@
                 rules: {
                     summary: [{ validator: checkSummary, trigger: "blur" }],
                 },
-                // 已提交的表格数据
-                tableData: [
-                    {
-                        orderNumber: 1,
-                        name: "我的开题报告",
-                        auditState: true,
-                        passState: true,
-                    },
-                ],
+                // 已提交的开题报告列表
+                openingReportList: [],
             };
         },
         methods: {
-            submit(formName) {
-                this.$refs[formName].validate((valid) => {
+            // 上传
+            submit() {
+                this.$refs.openingReportForm.validate((valid) => {
                     if (valid) {
                         this.$refs.upload.submit();
+                        setTimeout(() => {
+                            this.getMyOpeningReportList();
+                        }, 500);
                     } else {
                         return false;
                     }
                 });
             },
+            // 下载
+            async download(row) {
+                let data = await downloadOpeningReport(row.id);
+                if (!data) return;
+                this.fileDownload(data, row.fileName);
+            },
+            // 删除
+            deleteReport(row) {
+                this.$confirm("此操作将永久删除，确认继续吗？", "删除开题报告", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning",
+                })
+                    .then(async () => {
+                        // 发送请求，删除
+                        let data = await deleteOpeningReport(row.id);
+                        if (data) {
+                            this.$message({
+                                type: "success",
+                                center: true,
+                                message: "删除成功",
+                            });
+                            this.getMyOpeningReportList();
+                        }
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: "info",
+                            center: true,
+                            message: "已取消删除",
+                        });
+                    });
+            },
+            // 查询我上传的开题报告
+            async getMyOpeningReportList() {
+                let data = await getMyOpeningReport(this.sno);
+                let newData = data.map((item) => {
+                    item.uploadTime = new Date(item.uploadTime).toLocaleString();
+                    return item;
+                });
+                if (data) {
+                    this.openingReportList = [...newData];
+                }
+            },
+            // 根据学生学号在课题表里查询导师的学号
+            async getTutorTno() {
+                let data = await selectTutorTno(this.sno);
+                this.tno = data;
+            },
         },
-        mounted() {},
+        mounted() {
+            // 获取登录信息
+            let loginInformation = JSON.parse(
+                localStorage.getItem("loginInformation")
+            );
+            // 存储学号
+            this.sno = loginInformation.sno;
+            // 查询我上传的开题报告
+            this.getMyOpeningReportList();
+            // 查询导师学号
+            this.getTutorTno();
+        },
         beforeRouteEnter(to, from, next) {
             let loginInformation = JSON.parse(
                 localStorage.getItem("loginInformation")

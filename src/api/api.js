@@ -66,6 +66,18 @@ export const getMyProject = (studentId) => { return $axios.get(`/student/myProje
 // 查询学生所选课题的导师信息
 export const getMyProjectTutor = (tno) => { return $axios.get(`/student/myProjectTutor?tno=${tno}`) }
 
+// 学生查询上传的开题报告
+export const getMyOpeningReport = (sno) => { return $axios.get(`/student/getMyOpeningReport?sno=${sno}`) }
+
+// 学生下载开题报告
+export const downloadOpeningReport = (id) => { return $axios.get(`/student/downloadOpeningReport?id=${id}`, { responseType: 'arraybuffer' }) }
+
+// 学生删除开题报告
+export const deleteOpeningReport = (id) => { return $axios.get(`/student/deleteOpeningReport?id=${id}`) }
+
+// 学生查询我的导师学号
+export const selectTutorTno = (sno) => { return $axios.get(`/student/selectTutorTno?sno=${sno}`) }
+
 // 查询课题详情里的学生信息
 export const getStudentData = (sno) => { return $axios.get(`/student/getStudentData?sno=${sno}`) }
 
@@ -81,8 +93,20 @@ export const tutorChangeProjectInfo = (data) => { return $axios.post(`/tutor/cha
 // 导师发布课题
 export const tutorPublishNewProject = (data) => { return $axios.post(`/tutor/publishNewProject`, data) }
 
-// 获取导师发布的所有课题信息
+// 导师获取自己发布的所有课题信息
 export const tutorGetMyPublishProject = (tutorId) => { return $axios.get(`/tutor/myPublishProject?tutorId=${tutorId}`) }
+
+// 导师查询选择自己课题的所有的学生的学号和姓名
+export const tutorSearchStudentSnoName = (tno) => { return $axios.get(`/tutor/searchStudentSnoName?tno=${tno}`) }
+
+// 导师获取自己学生的所有开题报告
+export const tutorSearchAllReport = (tno) => { return $axios.get(`/tutor/searchAllReport?tno=${tno}`) }
+
+// 导师按学生学号获取开题报告
+export const tutorGetReportBySno = (sno) => { return $axios.get(`/tutor/getReportBySno?sno=${sno}`) }
+
+// 导师点评开题报告
+export const tutorUpdateReport = (id, data) => { return $axios.post("/tutor/updateOpeningReport", { id, ...data }) }
 
 // 管理员查询全部学生
 export const adminSelectAllStudent = () => { return $axios.get("/admin/selectAllStudent") }
