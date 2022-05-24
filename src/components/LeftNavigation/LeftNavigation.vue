@@ -79,7 +79,7 @@
                                 开题报告批阅
                             </el-menu-item>
                         </router-link>
-                        <router-link to="/document_translation">
+                        <router-link to="/translation_review">
                             <el-menu-item index="3-2">
                                 文献翻译批阅
                             </el-menu-item>

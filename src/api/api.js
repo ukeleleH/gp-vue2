@@ -78,6 +78,18 @@ export const deleteOpeningReport = (id) => { return $axios.get(`/student/deleteO
 // 学生查询我的导师学号
 export const selectTutorTno = (sno) => { return $axios.get(`/student/selectTutorTno?sno=${sno}`) }
 
+// 查询文献翻译是否存在
+export const selectTranslationExist = (sno) => { return $axios.get(`/student/searchTranslationExist?sno=${sno}`) }
+
+// 学生上传文献翻译
+export const uploadTranslation = (data) => { return $axios.post("/student/uploadTranslation", data) }
+
+// 学生更新文献翻译
+export const updateTranslation = (data) => { return $axios.post("/student/updateTranslation", data) }
+
+// 学生查询文献翻译内容
+export const selectTranslation = (sno) => { return $axios.post(`/student/searchTranslation?sno=${sno}`) }
+
 // 查询课题详情里的学生信息
 export const getStudentData = (sno) => { return $axios.get(`/student/getStudentData?sno=${sno}`) }
 

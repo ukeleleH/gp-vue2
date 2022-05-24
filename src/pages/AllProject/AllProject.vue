@@ -310,6 +310,7 @@
                                     });
                                     this.getAllProjectList();
                                     this.$bus.$emit("myProjectHasChanged");
+                                    this.$bus.$emit("canEditTranslation");
                                 }
                             })
                             .catch(() => {

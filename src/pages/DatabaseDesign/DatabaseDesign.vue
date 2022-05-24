@@ -173,6 +173,7 @@
         name: "DatabaseDesign",
         data() {
             return {
+                timer: "",
                 // 表名是否可编辑
                 canEdit: false,
                 activeTabName: "1",
@@ -302,12 +303,16 @@
                 this.tabIndex = localStorage.getItem("tabIndex");
             }
 
-            // setInterval(() => {
-            //     let strTabs = JSON.stringify(this.tabs).replace("true", "false");
-            //     localStorage.setItem("tabs", strTabs);
-            //     localStorage.setItem("tabIndex", this.tabIndex);
-            // }, 1000);
+            this.timer = setInterval(() => {
+                let strTabs = JSON.stringify(this.tabs).replace("true", "false");
+                localStorage.setItem("tabs", strTabs);
+                localStorage.setItem("tabIndex", this.tabIndex);
+            }, 1000);
         },
+        beforeDestroy() {
+            clearInterval(this.timer);
+        },
+
         beforeRouteEnter(to, from, next) {
             let loginInformation = JSON.parse(
                 localStorage.getItem("loginInformation")

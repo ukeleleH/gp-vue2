@@ -700,6 +700,7 @@
                                 // 触发全局事件总线里的自定义事件, 更新全部的课题信息，更新我的课题信息
                                 this.$bus.$emit("projectHasChanged");
                                 this.$bus.$emit("myProjectHasChanged");
+                                this.$bus.$emit("cantEditTranslation");
                             }
                         } else {
                             this.$message({
